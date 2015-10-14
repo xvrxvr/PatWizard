@@ -16,6 +16,10 @@ SOURCES += main.cpp\
         mainwindow.cpp
 
 HEADERS  += mainwindow.h \
-    gr_object.h
+    gr_object.h \
+    NetListReader/inp_def.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    constrains.xlsx

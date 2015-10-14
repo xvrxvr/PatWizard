@@ -14,12 +14,16 @@ struct GrShape {
     uint32_t x,y;
     uint32_t options;
     const char* text;
+    uint8_t color;
+    uint8_t shape;
 
     enum Options {
         FixedPoint     = 0x00000001,
         ArcCW          = 0x00000002,
         FillPath       = 0x00000004,
-        ArcIsEllips    = 0x00000008
+        ArcIsEllips    = 0x00000008,
+        Hidden         = 0x00000010,
+        FullCircle     = 0x00000020
     };
 };
 
