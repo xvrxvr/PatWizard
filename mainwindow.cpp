@@ -7,18 +7,28 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Initialized!");
+    ui->mainToolBar->setVisible(false);
 
-    //NOTE: when there will be more menu entries (and more actions),
-    // it is recommended to refactor the code below
-    // and extract menu creation to another method like createMenus().Now it's left "as is" to show the flow.
-    fileMenu = ui->menuBar->addMenu(tr("&File"));
+    createActions();
+    createMenus();
+}
 
+
+void MainWindow::createActions() {
+    // action for opening file
     openFileAction = new QAction(tr("&Open"), this);
     openFileAction->setShortcuts(QKeySequence::Open);
     openFileAction->setStatusTip(tr("Open PCB file"));
     connect(openFileAction, SIGNAL(triggered()), this, SLOT(openFile()));
+}
+
+
+void MainWindow::createMenus() {
+    // file menu entry
+    fileMenu = ui->menuBar->addMenu(tr("&File"));
     fileMenu->addAction(openFileAction);
 }
+
 
 void MainWindow::openFile() {
     ui->statusBar->showMessage("openFile() not implemented yet!");
