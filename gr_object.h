@@ -43,5 +43,36 @@ public:
     virtual void update() =0;
 };
 
+class GrReaderFabric {
+    static GrReaderFabric* root;
+    GrReaderFabric* next;
+    QString name;
+public:
+    GrReaderFabric(QString n) : name(n)
+    {
+        next=root;
+        root=this;
+    }
+    virtual GrReader* create() =0;
+    static QMap<QString,GrReaderFabric*> list_all()
+    {
+        QMap<QString,GrReaderFabric*> rv;
+        for(GrReaderFabric* self=root; self; self=self->next)
+            rv[self->name]=self;
+        return rv;
+    }
+};
+
+template<class GR>
+class GrRdrFabricImp : public GrReaderFabric {
+public:
+    GrRdrFabricImp(QString nm) : GrReaderFabric(nm) {}
+
+    virtual GrReader* create() {return new GR;}
+};
+
+#define DEF_GR(ClassName)  static GrRdrFabricImp<ClassName> gr_reader_fabric_instance_##ClassName(#ClassName)
+
+
 #endif // GR_OBJECT_H
 
