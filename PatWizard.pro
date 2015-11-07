@@ -13,11 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    GeometrySolver/gemetrysolver.cpp
 
 HEADERS  += mainwindow.h \
     gr_object.h \
-    NetListReader/inp_def.h
+    NetListReader/inp_def.h \
+    GeometrySolver/gemetrysolver.h
 
 FORMS    += mainwindow.ui
 
