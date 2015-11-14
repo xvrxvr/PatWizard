@@ -1,5 +1,10 @@
 #ifndef GR_OBJECT_H
 #define GR_OBJECT_H
+#include <stdint.h>
+#include <vector>
+#include <QVector>
+#include <QMap>
+using namespace std;
 
 struct GrShape {
     enum Type {
@@ -27,11 +32,45 @@ struct GrShape {
     };
 };
 
+struct Constrain{
+    GrShape obj1;
+    GrShape obj2;
+    enum Type {
+        PointCoord = 1,
+        PointToPoint,
+        LineToPoint,
+        ArcToPoint,
+        LineToLine,
+        LineAngle,
+        ArcToArc,
+        ArcAngle,
+        ArcSweep,
+        ArcRadius
+    }type;
+    struct Options{
+        double param1;
+        double param2;
+    }options;
+};
+
 class GrObject {
 public:
-    virtual QVector<GrShape> get_image() =0;
-    virtual QMap<QString,uint32_t> get_constrain_vars() =0;
-    virtual QVector<Constrain*> get_constrains() =0;
+    QVector<GrShape> get_image(){
+        QVector<GrShape> vector = *new QVector<GrShape>;
+        return vector;
+
+    }
+
+    QMap<QString,uint32_t> get_constrain_vars(){
+        QMap<QString,uint32_t> vector = *new QMap<QString,uint32_t>;
+        return vector;
+
+    }
+    QVector<Constrain> get_constrains(){
+        QVector<Constrain> vector = *new QVector<Constrain>;
+        return vector;
+
+    }
 };
 
 class GrReader {
