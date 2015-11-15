@@ -16,11 +16,13 @@ struct GrShape {
         ClosePath,
         Text
     } type;
-    uint32_t x,y;
+    uint32_t x1,y1;
+    uint32_t x2,y2;
     uint32_t options;
     const char* text;
     uint8_t color;
     uint8_t shape;
+    bool fix;//can we shift this object or not
 
     enum Options {
         FixedPoint     = 0x00000001,
@@ -48,8 +50,8 @@ struct Constrain{
         ArcRadius
     }type;
     struct Options{
-        double param1;
-        double param2;
+        double param1;//start of range
+        double param2;//end of range
     }options;
 };
 
