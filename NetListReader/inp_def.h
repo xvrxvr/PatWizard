@@ -1,6 +1,8 @@
 #ifndef INP_DEF_H
 #define INP_DEF_H
 
+#include <QString>
+
 class LoadedHandler : public GrObject {
 public:
     QString get_image(uint32_t);
@@ -34,6 +36,9 @@ class ReadParser {
 public:
     ReadParser(const char* xpath, ReadEventHandler*);
     ReadParser& operator << (const ReadParser&);
+
+private:
+    QVector<QString> content;
 };
 
 /*
