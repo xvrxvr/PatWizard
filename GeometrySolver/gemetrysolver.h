@@ -13,28 +13,8 @@ class GemetrySolver
 {
 public:
     GemetrySolver();
-    QVector<QVector <delta> > RunSolver (QVector <GrObject> Shapes){
-        QVector <delta> local_delta = *new QVector <delta>;
-        //Select micro in macro
-        for (int i = 0; i < Shapes.size(); ++i)
-        {
-            GrObject shape = Shapes.at(i);
-            //For current micro obkect in macro object select constrain
-            //Need to add search of fix points.
-            for (int j = 0; j < shape.get_constrains().size(); ++j)
-            {
-                 Constrain constr = shape.get_constrains().at(j);
-                 if (ConstrainChecker(constr)){
-                     //return leaf
-                 }
-                 else
-                     local_delta = ShiftSolver(constr);//several variants of possible positions of obj
-                 PreparePhase();
-            }
-        }
-        CollectSolution();
+    QVector<QVector <delta> > RunSolver (QVector <GrObject> Shapes);
 
-    }
     //Check constrain. Input - constrain. Output - true or false.
     bool ConstrainChecker(Constrain constr){
         double current_dist = 0;
@@ -108,7 +88,7 @@ public:
     }
     //Return several variants of possible placement of current objs.
     QVector <delta> ShiftSolver(Constrain constr){
-        QVector <delta> local_delta = *new QVector <delta>;
+        QVector <delta> local_delta;
         switch (constr.type) {
             case 1:
                 //local_delta.append(coordinate_for_point(constr));
@@ -147,9 +127,9 @@ public:
         return local_delta;
     }
     //Form tree of variants of shifts. Input - local_delta, pointer to tree struct. Output - pointer to finished tree.
-    void PreparePhase();
+    void PreparePhase() {}
     //Input - pointer to struct tree. Output  - QVector<QVector <delta> > (that's exactly solve of the problem)
-    void CollectSolution();
+    void CollectSolution() {}
 
     QVector <delta> point_to_point(Constrain constr){
         //Function will be called if constrains are not met, so there is no need to check it
@@ -157,7 +137,7 @@ public:
                 double start_required_dist = constr.options.param1, end_required_dist = constr.options.param2;
                 double current_dist = 0;
                 double shift =0;//
-                QVector <delta> local_delta = *new QVector <delta>;
+                QVector <delta> local_delta;
                 delta local_shift;
 
                 current_dist = sqrt(pow(point_1.x1 - point_2.x1,2) + pow(point_1.y1 - point_2.y1, 2));

@@ -3,8 +3,8 @@
 
 class LoadedHandler : public GrObject {
 public:
-    QString get_image(uint32_t);
-    void set_image(const char*, uint32_t);
+    virtual QString get_image(uint32_t);
+    virtual void set_image(const char*, uint32_t);
 };
 
 struct LoadedValue {
@@ -64,6 +64,7 @@ public:
     .A("    shapeWidth",       &InpPadShape::width )
     .A("    shapeHeight",      &InpPadShape::height )
     ...
+    .read_file(args["file"]);
 
 */
 

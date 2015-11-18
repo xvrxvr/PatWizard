@@ -57,20 +57,18 @@ struct Constrain{
 
 class GrObject {
 public:
-    QVector<GrShape> get_image(){
-        QVector<GrShape> vector = *new QVector<GrShape>;
+    virtual QVector<GrShape> get_image(){
+        QVector<GrShape> vector;
         return vector;
 
     }
 
-    QMap<QString,uint32_t> get_constrain_vars(){
-        QMap<QString,uint32_t> vector = *new QMap<QString,uint32_t>;
-        return vector;
+    virtual QMap<QString,uint32_t> get_constrain_vars(){
+        return QMap<QString,uint32_t>();
 
     }
-    QVector<Constrain> get_constrains(){
-        QVector<Constrain> vector = *new QVector<Constrain>;
-        return vector;
+    virtual QVector<Constrain> get_constrains(){
+        return QVector<Constrain>();
 
     }
 };
