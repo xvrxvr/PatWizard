@@ -14,7 +14,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    GeometrySolver/gemetrysolver.cpp
+    GeometrySolver/gemetrysolver.cpp \
+    NetListReader/inp_def.cpp
 
 HEADERS  += mainwindow.h \
     gr_object.h \
