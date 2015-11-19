@@ -1,7 +1,6 @@
 #ifndef GR_OBJECT_H
 #define GR_OBJECT_H
 #include <stdint.h>
-#include <vector>
 #include <QVector>
 #include <QMap>
 using namespace std;
@@ -35,8 +34,8 @@ struct GrShape {
 };
 
 struct Constrain{
-    GrShape obj1;
-    GrShape obj2;
+    GrShape *obj1;
+    GrShape *obj2;
     enum Type {
         PointCoord = 1,
         PointToPoint,
