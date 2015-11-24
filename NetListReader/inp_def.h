@@ -5,8 +5,8 @@
 
 class LoadedHandler : public GrObject {
 public:
-    QString get_image(uint32_t opaque);
-    void set_image(const char*, uint32_t opaque);
+    virtual QString get_image(uint32_t);
+    virtual void set_image(const char*, uint32_t);
 };
 
 struct LoadedValue {

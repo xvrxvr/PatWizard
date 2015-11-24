@@ -1,7 +1,6 @@
 #ifndef GR_OBJECT_H
 #define GR_OBJECT_H
 #include <stdint.h>
-#include <vector>
 #include <QVector>
 #include <QMap>
 using namespace std;
@@ -35,8 +34,8 @@ struct GrShape {
 };
 
 struct Constrain{
-    GrShape obj1;
-    GrShape obj2;
+    GrShape *obj1;
+    GrShape *obj2;
     enum Type {
         PointCoord = 1,
         PointToPoint,
@@ -57,20 +56,18 @@ struct Constrain{
 
 class GrObject {
 public:
-    QVector<GrShape> get_image(){
-        QVector<GrShape> vector = *new QVector<GrShape>;
+    virtual QVector<GrShape> get_image(){
+        QVector<GrShape> vector;
         return vector;
 
     }
 
-    QMap<QString,uint32_t> get_constrain_vars(){
-        QMap<QString,uint32_t> vector = *new QMap<QString,uint32_t>;
-        return vector;
+    virtual QMap<QString,uint32_t> get_constrain_vars(){
+        return QMap<QString,uint32_t>();
 
     }
-    QVector<Constrain> get_constrains(){
-        QVector<Constrain> vector = *new QVector<Constrain>;
-        return vector;
+    virtual QVector<Constrain> get_constrains(){
+        return QVector<Constrain>();
 
     }
 };
