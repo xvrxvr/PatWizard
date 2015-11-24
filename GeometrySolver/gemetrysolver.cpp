@@ -78,13 +78,28 @@ QVector<QVector <delta> > GemetrySolver::RunSolver (QVector <GrObject> Shapes){
                 //local_delta = arc_to_arc(constr);
                 break;
             case 8:
-                //local_delta = angle_for_arc(constr);
-                break;
+                //Check angle in range for arc
+                //Checks under next case if first object is angle to check and second is horizontal
+                //TODO: make second object horizontal:
+                //constr.obj2->x1 = O.x1 - R
+                //constr.obj2->y1 = O.x1 - R
+                //break;
             case 9:
+                //Check sweep in range for arc
+                //if obj1 != obj2 for arc, it means that it is the sweep of the arc
+                if ( constr.obj1->type == 3 && constr.obj2->type == 3 )/*ArcTo */
+                {
+                    //if obj1 == obj2 but for arc, it means that it is the angle of the arc
+                    current_dist = acos((constr.obj1->x1-constr.obj1->x2)*(constr.obj2->x1-constr.obj2->x2)+
+                                          (constr.obj1->y1-constr.obj1->y2)*(constr.obj2->y1-constr.obj2->y2)/
+                                          sqrt(pow(constr.obj1->x1 - constr.obj2->x1,2) + pow(constr.obj1->y1 - constr.obj2->y1, 2)));
+                }
                 //local_delta = sweep_for_arc(constr);
                 break;
             case 10:
                 //local_delta = radius_for_arc(constr);
+                //Calculates distance between obj1 - center of arc and obj2 - one of the points on arc.
+                current_dist = sqrt(pow(constr.obj1->x1 - constr.obj2->x1,2) + pow(constr.obj1->y1 - constr.obj2->y1, 2));
                 break;
             default:
                //It can be there your advertisiment
