@@ -5,8 +5,8 @@
 
 class LoadedHandler : public GrObject {
 public:
-    QString get_image(uint32_t);
-    void set_image(const char*, uint32_t);
+    QString get_image(uint32_t opaque);
+    void set_image(const char*, uint32_t opaque);
 };
 
 struct LoadedValue {
@@ -16,11 +16,11 @@ struct LoadedValue {
     };
     uint32_t options;
     LoadedHandler* handler;
-    uint32_t handler_opaque;
+    uint32_t handler_opaque; // number send to handler to handle different ways
 
-    enum {
-        O_IsList   = 0x00000001,
-        O_NewLine  = 0x00000002
+    enum { // bit field
+        O_IsList   = 0x00000001, // union contain list
+        O_NewLine  = 0x00000002  // for lists started at new line to draw initial structure of source file
     };
 };
 
@@ -34,14 +34,16 @@ struct LoadedList {
 
 class ReadParser {
 public:
+/* it was for previous implementation used "<<"
     ReadParser(const char* xpath, ReadEventHandler*);
     ReadParser& operator << (const ReadParser&);
-
+*/
 private:
     QVector<QString> content;
 };
 
 /*
+// previous implementation
 
   ReadParser("library/padStyleDef",new PadStyleHandler)
    << ReadParser("holeDiam", new GetHoleDiament)
@@ -61,20 +63,22 @@ private:
         int shape;
         int width, height;
    };
-
-   ReadParser()
-    .N("library/padStyleDef",  []() {new InpPadStyle} )
-    .N("  padShape",           []() (new InpPadShape} )
-    .A("    padShapeType",     &InpPasShape::shape }
-    .A("    shapeWidth",       &InpPadShape::width )
-    .A("    shapeHeight",      &InpPadShape::height )
-    ...
-
 */
 
 class NetListReader : public GrReader {
 public:
+    read() {
 
+        // it is anonymous object
+           ReadParser()
+            .N("library/padStyleDef",  []() {new InpPadStyle}, int opaque = 0 )
+            .N("  padShape",           []() (new InpPadShape} )
+            .A("    padShapeType",     &InpPasShape::shape }
+            .A("    shapeWidth",       &InpPadShape::width )
+            .A("    shapeHeight",      &InpPadShape::height )
+            .read_file
+            ...
+}
 };
 
 #endif // INP_DEF_H
