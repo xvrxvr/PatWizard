@@ -4,9 +4,7 @@
 #include <QVector>
 #include <QMap>
 using namespace std;
-
-struct GrShape {
-    enum Type {
+enum Type {
         MoveTo,
         LineTo,
         ArcTo,
@@ -14,7 +12,9 @@ struct GrShape {
         ArcCenter2, // For ellipse
         ClosePath,
         Text
-    } type;
+    };
+struct GrShape {
+    Type type;
     uint32_t x1,y1;
     uint32_t x2,y2;
     uint32_t options;

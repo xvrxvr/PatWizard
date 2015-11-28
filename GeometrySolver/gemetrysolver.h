@@ -12,18 +12,14 @@ struct delta{
 class GemetrySolver
 {
 public:
+    QVector<GrShape> vector_of_shapes;
+
     GemetrySolver();//возвращаем статус
     //добавить поле вектор дельт и для него написать get()
     QVector<QVector <delta> > RunSolver (QVector <GrObject> Shapes);
 
     //Check constrain. Input - constrain. Output - true or false.
     bool ConstrainChecker(Constrain constr);
-    //Return several variants of possible placement of current objs.
-    QVector <delta> ShiftSolver(Constrain constr);
-    //Form tree of variants of shifts. Input - local_delta, pointer to tree struct. Output - pointer to finished tree.
-    void PreparePhase();
-    //Input - pointer to struct tree. Output  - QVector<QVector <delta> > (that's exactly solve of the problem)
-    void CollectSolution();
 
     QVector <delta> point_to_point(Constrain constr);
     void coordinate_for_point(Constrain constr);//GrShape &point_1, double x, double y);
