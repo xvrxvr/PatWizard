@@ -2,8 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
-class WizardScene;
+#include <wizardscene.h>
 
 QT_BEGIN_NAMESPACE
 class QAction;

@@ -1,14 +1,14 @@
 #include "wizardscene.h"
 
-WizardScene::WizardScene(QMenu* itemMenu, QObject* parent)
+WizardScene::WizardScene(QMenu* itemMenu_, QObject* parent)
     : QGraphicsScene(parent)
 {
-    mItemMenu  = itemMenu;
-    mLineColor = Qt::black;
+    itemMenu = itemMenu_;
+    lineColor = Qt::black;
 }
 
 void WizardScene::setLineColor(const QColor &color)
 {
-    mLineColor = color;
+    lineColor = color;
 }
 

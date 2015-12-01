@@ -17,12 +17,12 @@ class WizardScene : public QGraphicsScene
 
 public:
     WizardScene(QMenu* itemMenu, QObject* parent=0);
-    QColor lineColor() const { return mLineColor;}
+    QColor getLineColor() const { return lineColor;}
     void setLineColor(const QColor& color);
 
 private:
-    QMenu* mItemMenu;
-    QColor mLineColor;
+    QMenu* itemMenu;
+    QColor lineColor;
 
 };
 
