@@ -5,14 +5,15 @@
 MainWindow::MainWindow() {
     createActions();
     createMenus();
-
- }
+    status = statusBar();
+}
 
 
 void MainWindow::createActions() {
     // action for opening file
     openFileAction = new QAction(tr("&File"), this);
     openFileAction->setShortcuts(QKeySequence::Open);
+    openFileAction->setStatusTip(tr("Open PCB file"));
     connect(openFileAction, SIGNAL(triggered()), this, SLOT(openFile()));
 
     aboutAction = new QAction(tr("A&bout"), this);
@@ -33,7 +34,7 @@ void MainWindow::createMenus() {
 
 
 void MainWindow::openFile() {
-
+    status->showMessage("OpenFile:: not implemented yet");
 }
 
 
