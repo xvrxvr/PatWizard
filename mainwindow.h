@@ -7,6 +7,7 @@ class WizardScene;
 
 QT_BEGIN_NAMESPACE
 class QAction;
+class QGraphicsView;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -26,7 +27,8 @@ private:
     void createMenus();
     void createToolBox();
 
-
+    WizardScene *scene;
+    QGraphicsView *view;
 
     QMenu *fileMenu;
     QMenu *aboutMenu;

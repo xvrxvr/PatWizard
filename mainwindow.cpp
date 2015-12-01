@@ -4,8 +4,23 @@
 
 MainWindow::MainWindow() {
     createActions();
+    createToolBox();
     createMenus();
 
+    scene = new WizardScene(fileMenu, this);
+    scene->setSceneRect(QRectF(0, 0, 5000, 5000));
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    //layout->addWidget(toolBox);
+    view = new QGraphicsView(scene);
+    layout->addWidget(view);
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(layout);
+
+    setCentralWidget(widget);
+    setWindowTitle(tr("Diagramscene"));
+    setUnifiedTitleAndToolBarOnMac(true);
  }
 
 
@@ -18,6 +33,10 @@ void MainWindow::createActions() {
     aboutAction = new QAction(tr("A&bout"), this);
     aboutAction->setShortcut(tr("Ctrl+B"));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+}
+
+
+void MainWindow::createToolBox() {
 }
 
 
