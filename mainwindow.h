@@ -8,6 +8,7 @@ class WizardScene;
 QT_BEGIN_NAMESPACE
 class QAction;
 class QGraphicsView;
+class QComboBox;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -20,6 +21,7 @@ public:
 private slots:
     void openFile();
     void about();
+    void sceneScaleChanged(const QString &scale);
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -33,6 +35,8 @@ private:
     QMenu *fileMenu;
     QMenu *aboutMenu;
     QStatusBar *status;
+    QToolBar *pointerToolbar;
+    QComboBox *sceneScaleCombo;
 
     QAction *openFileAction;
     QAction *aboutAction;

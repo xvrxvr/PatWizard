@@ -9,10 +9,9 @@ MainWindow::MainWindow() {
     createMenus();
 
     scene = new WizardScene(fileMenu, this);
-    scene->setSceneRect(QRectF(0, 0, 5000, 5000));
+    scene->setSceneRect(QRectF(0, 0, 500, 500));
 
     QHBoxLayout *layout = new QHBoxLayout;
-    //layout->addWidget(toolBox);
     view = new QGraphicsView(scene);
     layout->addWidget(view);
 
@@ -20,7 +19,7 @@ MainWindow::MainWindow() {
     widget->setLayout(layout);
 
     setCentralWidget(widget);
-    setWindowTitle(tr("Diagramscene"));
+    setWindowTitle(tr("PatWizard"));
     setUnifiedTitleAndToolBarOnMac(true);
 
     status = statusBar();
@@ -41,6 +40,16 @@ void MainWindow::createActions() {
 
 
 void MainWindow::createToolBox() {
+    sceneScaleCombo = new QComboBox;
+    QStringList scales;
+    scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
+    sceneScaleCombo->addItems(scales);
+    sceneScaleCombo->setCurrentIndex(2);
+    connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(sceneScaleChanged(QString)));
+
+    pointerToolbar = addToolBar(tr("Pointer type"));
+    pointerToolbar->addWidget(sceneScaleCombo);
 }
 
 
@@ -64,4 +73,13 @@ void MainWindow::about()
 {
     QMessageBox::about(this, tr("About PatWizard"),
                        tr("<b>PatWizard</b> is the bad example of C++ code."));
+}
+
+
+void MainWindow::sceneScaleChanged(const QString &scale) {
+    double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
+    QMatrix oldMatrix = view->matrix();
+    view->resetMatrix();
+    view->translate(oldMatrix.dx(), oldMatrix.dy());
+    view->scale(newScale, newScale);
 }
