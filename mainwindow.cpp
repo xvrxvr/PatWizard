@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QtWidgets>
+#include "wizardscene.h"
 
 MainWindow::MainWindow() {
     createActions();
