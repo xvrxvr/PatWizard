@@ -6,7 +6,6 @@ MainWindow::MainWindow() {
     createActions();
     createToolBox();
     createMenus();
-<<<<<<< HEAD
 
     scene = new WizardScene(fileMenu, this);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
@@ -22,11 +21,9 @@ MainWindow::MainWindow() {
     setCentralWidget(widget);
     setWindowTitle(tr("Diagramscene"));
     setUnifiedTitleAndToolBarOnMac(true);
- }
-=======
+
     status = statusBar();
 }
->>>>>>> 65f33ba4e1b0b219cb9b4a7c672ab7e811195b38
 
 
 void MainWindow::createActions() {
