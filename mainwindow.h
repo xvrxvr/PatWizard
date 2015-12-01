@@ -32,6 +32,7 @@ private:
 
     QMenu *fileMenu;
     QMenu *aboutMenu;
+    QStatusBar *status;
 
     QAction *openFileAction;
     QAction *aboutAction;

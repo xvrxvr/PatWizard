@@ -6,6 +6,7 @@ MainWindow::MainWindow() {
     createActions();
     createToolBox();
     createMenus();
+<<<<<<< HEAD
 
     scene = new WizardScene(fileMenu, this);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
@@ -22,12 +23,17 @@ MainWindow::MainWindow() {
     setWindowTitle(tr("Diagramscene"));
     setUnifiedTitleAndToolBarOnMac(true);
  }
+=======
+    status = statusBar();
+}
+>>>>>>> 65f33ba4e1b0b219cb9b4a7c672ab7e811195b38
 
 
 void MainWindow::createActions() {
     // action for opening file
     openFileAction = new QAction(tr("&File"), this);
     openFileAction->setShortcuts(QKeySequence::Open);
+    openFileAction->setStatusTip(tr("Open PCB file"));
     connect(openFileAction, SIGNAL(triggered()), this, SLOT(openFile()));
 
     aboutAction = new QAction(tr("A&bout"), this);
@@ -52,7 +58,7 @@ void MainWindow::createMenus() {
 
 
 void MainWindow::openFile() {
-
+    status->showMessage("OpenFile:: not implemented yet");
 }
 
 

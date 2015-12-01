@@ -16,7 +16,7 @@ class WizardScene : public QGraphicsScene
     Q_OBJECT
 
 public:
-    explicit WizardScene(QMenu* itemMenu, QObject* parent=0);
+    WizardScene(QMenu* itemMenu, QObject* parent=0);
     QColor lineColor() const { return mLineColor;}
     void setLineColor(const QColor& color);
 
