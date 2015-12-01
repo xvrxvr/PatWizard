@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 #include "wizardscene.h"
+#include "gr_object.h"
 
 MainWindow::MainWindow() {
     createActions();
@@ -56,7 +57,10 @@ void MainWindow::createMenus() {
 
 
 void MainWindow::openFile() {
-    status->showMessage("OpenFile:: not implemented yet");
+    QString fileName =
+            QFileDialog::getOpenFileName(this, tr("Open PCB File"), ".", tr("PCB files(*.pcb)"));
+    //fabric = new GrRdrFabricImp<GR>(filename);
+    //reader = fabric->create();
 }
 
 

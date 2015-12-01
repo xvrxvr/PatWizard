@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 class WizardScene;
+class GrReaderFabric;
+class GrReader;
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -36,6 +38,9 @@ private:
 
     QAction *openFileAction;
     QAction *aboutAction;
+
+    GrReaderFabric* fabric;
+    GrReader* reader;
 };
 
 #endif // MAINWINDOW_H
