@@ -45,6 +45,12 @@ void MainWindow::createActions() {
     toolbarAddConstrAction->setCheckable(true);
     toolbarAddConstrAction->setIconText(tr("Hi"));
     connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(addConstrModeApply(bool)));
+
+    // add action for calcConstrains ToolButton/
+    toolbarCalcConstrAction = new QAction(this);
+    toolbarCalcConstrAction->setShortcut(tr("Ctrl+C"));
+    toolbarCalcConstrAction->setIconText(tr("Calc"));
+    connect(toolbarCalcConstrAction, SIGNAL(triggered()), this, SLOT(calculateConstrains()));
 }
 
 
@@ -60,9 +66,13 @@ void MainWindow::createToolBox() {
     addConstrButton = new QToolButton;
     addConstrButton->setDefaultAction(toolbarAddConstrAction);
 
+    calcConstrainsButton = new QToolButton;
+    calcConstrainsButton->setDefaultAction(toolbarCalcConstrAction);
+
     pointerToolbar = addToolBar(tr("Pointer type"));
     pointerToolbar->addWidget(sceneScaleCombo);
     pointerToolbar->addWidget(addConstrButton);
+    pointerToolbar->addWidget(calcConstrainsButton);
 }
 
 
@@ -102,4 +112,9 @@ void MainWindow::sceneScaleChanged(const QString &scale) {
 
 void MainWindow::addConstrModeApply(bool checked) {
     qDebug() << "hi" << checked;
+}
+
+void MainWindow::calculateConstrains()
+{
+    qDebug() << "calculateConstrains()";
 }

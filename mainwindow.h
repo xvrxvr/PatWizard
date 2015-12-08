@@ -21,12 +21,14 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+    enum Mode { usual=0, addConstrain=1};
 
 private slots:
     void openFile();
     void about();
     void sceneScaleChanged(const QString &scale);
     void addConstrModeApply(bool);
+    void calculateConstrains();
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -41,14 +43,15 @@ private:
     QMenu *aboutMenu;
     QStatusBar *status;
     QToolBar *pointerToolbar;
-    QToolBar *modeOptToolbar;
     QComboBox *sceneScaleCombo;
 
     QAction *openFileAction;
     QAction *aboutAction;
     QAction *toolbarAddConstrAction;
+    QAction *toolbarCalcConstrAction;
 
     QToolButton *addConstrButton;
+    QToolButton *calcConstrainsButton;
 
     GrReaderFabric *fabric;
     GrReader *reader;
