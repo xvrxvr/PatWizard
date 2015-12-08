@@ -56,8 +56,15 @@ private:
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;
 
-    GrReaderFabric *fabric;
-    GrReader *reader;
+/*
+    QVector<GrObject*> objects;
+    applyChanges(QVector<delta> v) {
+        for i in v:
+            toChange = objects.find(v);
+            toChange
+    }
+*/
+
 };
 
 #endif // MAINWINDOW_H
