@@ -20,6 +20,7 @@ public:
     QColor getLineColor() const { return lineColor;}
     void setLineColor(const QColor& color);
 
+
 private:
     QMenu* itemMenu;
     QColor lineColor;

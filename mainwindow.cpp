@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QtWidgets>
+#include <QToolButton>
 #include "wizardscene.h"
 #include "gr_object.h"
 
@@ -37,6 +38,13 @@ void MainWindow::createActions() {
     aboutAction = new QAction(tr("A&bout"), this);
     aboutAction->setShortcut(tr("Ctrl+B"));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+
+    // add action for addConstrain ToolButton.
+    toolbarAddConstrAction = new QAction(this);
+    toolbarAddConstrAction->setShortcut(tr("Ctrl+A"));
+    toolbarAddConstrAction->setCheckable(true);
+    toolbarAddConstrAction->setIconText(tr("Hi"));
+    connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(addConstrModeApply(bool)));
 }
 
 
@@ -49,8 +57,12 @@ void MainWindow::createToolBox() {
     connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(sceneScaleChanged(QString)));
 
+    addConstrButton = new QToolButton;
+    addConstrButton->setDefaultAction(toolbarAddConstrAction);
+
     pointerToolbar = addToolBar(tr("Pointer type"));
     pointerToolbar->addWidget(sceneScaleCombo);
+    pointerToolbar->addWidget(addConstrButton);
 }
 
 
@@ -86,4 +98,8 @@ void MainWindow::sceneScaleChanged(const QString &scale) {
     view->resetMatrix();
     view->translate(oldMatrix.dx(), oldMatrix.dy());
     view->scale(newScale, newScale);
+}
+
+void MainWindow::addConstrModeApply(bool checked) {
+    qDebug() << "hi" << checked;
 }

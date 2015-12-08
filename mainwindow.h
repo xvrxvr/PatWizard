@@ -6,6 +6,8 @@
 class WizardScene;
 class GrReaderFabric;
 class GrReader;
+class QToolButton;
+class QButtonGroup;
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -24,6 +26,7 @@ private slots:
     void openFile();
     void about();
     void sceneScaleChanged(const QString &scale);
+    void addConstrModeApply(bool);
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -38,13 +41,17 @@ private:
     QMenu *aboutMenu;
     QStatusBar *status;
     QToolBar *pointerToolbar;
+    QToolBar *modeOptToolbar;
     QComboBox *sceneScaleCombo;
 
     QAction *openFileAction;
     QAction *aboutAction;
+    QAction *toolbarAddConstrAction;
 
-    GrReaderFabric* fabric;
-    GrReader* reader;
+    QToolButton *addConstrButton;
+
+    GrReaderFabric *fabric;
+    GrReader *reader;
 };
 
 #endif // MAINWINDOW_H
