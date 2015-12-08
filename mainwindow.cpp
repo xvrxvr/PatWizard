@@ -15,6 +15,8 @@ MainWindow::MainWindow() {
     scene->setSceneRect(QRectF(0, 0, 500, 500));
 
     QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(toolBox);
+
     view = new QGraphicsView(scene);
     layout->addWidget(view);
 
