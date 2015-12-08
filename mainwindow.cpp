@@ -7,8 +7,9 @@
 
 MainWindow::MainWindow() {
     createActions();
-    createToolBox();
+    createToolBar();
     createMenus();
+    createToolBox();
 
     scene = new WizardScene(fileMenu, this);
     scene->setSceneRect(QRectF(0, 0, 500, 500));
@@ -54,7 +55,7 @@ void MainWindow::createActions() {
 }
 
 
-void MainWindow::createToolBox() {
+void MainWindow::createToolBar() {
     sceneScaleCombo = new QComboBox;
     QStringList scales;
     scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
@@ -85,6 +86,21 @@ void MainWindow::createMenus() {
     aboutMenu->addAction(aboutAction);
 }
 
+
+
+void MainWindow::createToolBox() {
+    QGridLayout *layout = new QGridLayout;
+    QToolButton *button = new QToolButton;
+    button->setDefaultAction(toolbarAddConstrAction);
+    layout->addWidget(button);
+    QWidget *itemWidget = new QWidget;
+    itemWidget->setLayout(layout);
+    qDebug() << "Oo";
+    toolBox = new QToolBox;
+    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
+    toolBox->setMinimumWidth(200);
+    toolBox->addItem(itemWidget, tr("What?"));
+}
 
 
 void MainWindow::openFile() {

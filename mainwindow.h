@@ -13,6 +13,7 @@ QT_BEGIN_NAMESPACE
 class QAction;
 class QGraphicsView;
 class QComboBox;
+class QToolBox;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -34,6 +35,7 @@ private:
     //should be used in constructor for building menu entries callbacks.
     void createActions();
     void createMenus();
+    void createToolBar();
     void createToolBox();
 
     WizardScene *scene;
@@ -44,6 +46,7 @@ private:
     QStatusBar *status;
     QToolBar *pointerToolbar;
     QComboBox *sceneScaleCombo;
+    QToolBox *toolBox;
 
     QAction *openFileAction;
     QAction *aboutAction;
