@@ -2,9 +2,10 @@
 #define GEMETRYSOLVER_H
 #include "gr_object.h"
 #include <cmath>
+
 //Show difference between old and new coordinates of GrShape
 struct delta{
-    GrShape *obj;//передавать индексы
+    geom_index obj;//передавать индексы
     double x;
     double y;
 };

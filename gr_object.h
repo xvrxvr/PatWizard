@@ -4,7 +4,11 @@
 #include <QVector>
 #include <QMap>
 using namespace std;
-enum Type {
+
+typedef uint32_t geom_index;
+
+struct GrShape {
+    enum Type {
         MoveTo,
         LineTo,
         ArcTo,
@@ -12,15 +16,15 @@ enum Type {
         ArcCenter2, // For ellipse
         ClosePath,
         Text
-    };
-struct GrShape {
-    Type type;
+    } type;
     uint32_t x1,y1;
-    uint32_t x2,y2;
+    //TODO: удалить поле
+    uint32_t x2,y2;//ненужное т.к. все точки есть в векторе GrShape-ов
     uint32_t options;
     const char* text;
     uint8_t color;
     uint8_t shape;
+    //TODO: удалить поле
     bool fix;//can we shift this object or not
 
     enum Options {
@@ -33,10 +37,11 @@ struct GrShape {
     };
 };
 
+
 struct Constrain{
-    GrShape *obj1;
-    GrShape *obj2;
-    enum Type {
+    geom_index obj1;
+    geom_index obj2;
+    enum TypeC {
         PointCoord = 1,
         PointToPoint,
         LineToPoint,
@@ -47,7 +52,7 @@ struct Constrain{
         ArcAngle,
         ArcSweep,
         ArcRadius
-    }type;
+    } type;
     struct Options{
         double param1;//start of range
         double param2;//end of range
