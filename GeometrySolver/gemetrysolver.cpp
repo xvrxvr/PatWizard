@@ -1,33 +1,99 @@
 #include "gemetrysolver.h"
+geom_index GemetrySolver::FindFixed(QVector< GrShape> vector_of_shapes)
+{
+    geom_index res = 0;
+    for ( int i = 0 ; i < vector_of_shapes.length(); ++i)
+    {
+       if( vector_of_shapes.at(i).options == GrShape::FixedPoint)
+           return i;
+       if( vector_of_shapes.at(i).type == GrShape::MoveTo)
+           res = i;
+    }
+    return res;
+}
 
-QVector<QVector <delta> > GemetrySolver::RunSolver (QVector <GrObject> Shapes){
+bool GemetrySolver::RunSolver (QVector <GrObject> gr_objects){
     QVector<QVector <delta> > local_delta;
+    QVector< rectangle > possible_solutions;
 
     //Initializing class fields
 
 
     //Select micro in macro
-    for (int i = 0; i < Shapes.size(); ++i)
+    for (int i = 0; i < gr_objects.size(); ++i)
     {
-        GrObject shape = Shapes.at(i);
-        vector_of_shapes = shape.get_image();
+        GrObject gr_object = gr_objects.at(i);
+        vector_of_shapes = gr_object.get_image();
+        geom_index fixed_point = FindFixed( vector_of_shapes);
+        QVector< Constrain > miserable_constr;
         //For current micro obkect in macro object select constrain
         //Need to add search of fix points.
-        for (int j = 0; j < shape.get_constrains().size(); ++j)
+        for (int j = 0; j < gr_object.get_constrains().size(); ++j)
         {
-             Constrain constr = shape.get_constrains().at(j);
-             if (ConstrainChecker(constr)){
-                 //return leaf
+             Constrain constr = gr_object.get_constrains().at(j);
+
+             if ( constr.obj1 == fixed_point || constr.obj2 == fixed_point )
+             {
+                 geom_index constr_fixed = (constr.obj1 == fixed_point) ? constr.obj1 : constr.obj2;
+                 geom_index host_shape = (constr.obj1 =! fixed_point) ? constr.obj1 : constr.obj2;
+                 rectangle leaf_soulutions[2];
+                 if ( constr.type == Constrain::PointToPoint )
+                 {
+                    //Linear interpolation of circle around fixed point
+                    leaf_soulutions[1].left_x = vector_of_shapes.at(constr_fixed).x1 - constr.options.param1;
+                    leaf_soulutions[1].left_y = vector_of_shapes.at(constr_fixed).y1 - constr.options.param1;
+
+                    leaf_soulutions[1].right_x = vector_of_shapes.at(constr_fixed).x1 - constr.options.param1;
+                    leaf_soulutions[1].right_y = vector_of_shapes.at(constr_fixed).y1 - constr.options.param1;
+
+                    leaf_soulutions[1].positive = true;
+                    leaf_soulutions[1].host_shape = host_shape;
+ //No solutions here
+                    leaf_soulutions[2].left_x = vector_of_shapes.at(constr_fixed).x1 - constr.options.param2;
+                    leaf_soulutions[2].left_y = vector_of_shapes.at(constr_fixed).y1 - constr.options.param2;
+
+                    leaf_soulutions[2].right_x = vector_of_shapes.at(constr_fixed).x1 - constr.options.param2;
+                    leaf_soulutions[2].right_y = vector_of_shapes.at(constr_fixed).y1 - constr.options.param2;
+
+            leaf_soulutions[1].positive = false;
+            leaf_soulutions[1].host_shape = host_shape;
+                 }
+                 if( host_shape != GrShape::FixedPoint)
+                 {
+             possible_solutions.append(leaf_soulutions[1]);
+             possible_solutions.append(leaf_soulutions[2]);
+                 }
+                 else
+                 {
+                     //Object of non-fixed point and artificial rectangle for solution
+                     GrShape h = vector_of_shapes.at(host_shape);
+                     rectangle artif_point = {h.x1,h.y1,h.x1,h.y1,true,host_shape};
+                     rectangle p_intersection = artif_point.intercect(leaf_soulutions[1]);
+                     rectangle n_intersection = artif_point.intercect(leaf_soulutions[2]);
+                     if ( p_intersection.left_x == -1 || n_intersection.left_x != -1 )
+                     {
+                         return false;
+                     }
+                     else
+                     {
+                         possible_solutions.append(artif_point);
+                     }
+                 }
              }
              else
              {
-                 //Invest in us
-                 //local_delta << ShiftSolver(constr);//several variants of possible positions of obj
+                 //Constrains for standalone processing
+                 miserable_constr.append(constr);
              }
+        }/*Constraints cycle*/
+        for( int j = 0 ; j <= miserable_constr.length() ; ++j )
+        {
+            //if ( vector_of_shapes.at(constr.obj1) )
         }
-    }
-    return local_delta;
+    }/*GrShapes cycle*/
 
+    /*solution;*/// = local_delta;
+    return true;
 }
 
 
@@ -157,7 +223,6 @@ QVector<QVector <delta> > GemetrySolver::RunSolver (QVector <GrObject> Shapes){
                 //TODO: make second object horizontal:
                 //constr.obj2->x1 = O.x1 - R
                 //constr.obj2->y1 = O.x1 - R
-                break;
             case Constrain::ArcSweep:
                 //Check sweep in range for arc
                 //if obj1 != obj2 for arc, it means that it is the sweep of the arc

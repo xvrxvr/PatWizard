@@ -10,17 +10,50 @@ struct delta{
     double y;
 };
 
+struct rectangle{
+    double left_x, left_y;
+    double right_x, right_y;
+    //Solutions if positive
+    bool positive;
+    geom_index host_shape;
+
+    rectangle intercect( rectangle rvalue)
+    {
+        //if( left_x < rvalue.left_x ) if( right_x < rvalue.right_x ) if( left_y < rvalue.left_y ) if( right_y < rvalue.right_y )
+        rectangle res;
+        res.left_x = -1;
+        res.left_y = -1;
+        res.right_x = -1;
+        res.right_y = -1;
+
+        if( min( right_x, rvalue.right_x) > max( left_x, rvalue.left_x) && min( left_y, rvalue.left_y ) > max( right_y, rvalue.right_y) )
+        {
+            res.left_x = rvalue.left_x;
+            res.left_y = left_y;
+            res.right_x = right_x;
+            res.right_y = rvalue.right_y;
+
+        }
+
+    return res;
+    }
+
+};
+
 class GemetrySolver
 {
 public:
     QVector<GrShape> vector_of_shapes;
+    QVector< QVector<delta> > solution;
+    QVector< QVector<delta> > get_solution(){ return solution; }
 
     GemetrySolver();//возвращаем статус
     //добавить поле вектор дельт и для него написать get()
-    QVector<QVector <delta> > RunSolver (QVector <GrObject> Shapes);
+    bool RunSolver (QVector <GrObject> Shapes);
 
     //Check constrain. Input - constrain. Output - true or false.
     bool ConstrainChecker(Constrain constr);
+    geom_index FindFixed(QVector< GrShape> vector_of_shapes);
 
     QVector <delta> point_to_point(Constrain constr);
     void coordinate_for_point(Constrain constr);//GrShape &point_1, double x, double y);
