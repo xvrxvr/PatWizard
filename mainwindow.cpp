@@ -2,9 +2,13 @@
 
 #include <QtWidgets>
 #include <QToolButton>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
+#include <QMessageBox>
+#include <QThread>
 #include "wizardscene.h"
 #include "gr_object.h"
-#include "GeometrySolver/gemetrysolver.h"
+//#include "GeometrySolver/gemetrysolver.h"
 
 MainWindow::MainWindow() {
     createActions();
@@ -101,7 +105,7 @@ void MainWindow::createToolBox() {
     layout->addWidget(button);
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(layout);
-    qDebug() << "Oo";
+
     toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(200);
@@ -142,6 +146,24 @@ void MainWindow::calculateConstrains()
     qDebug() << "calculateConstrains()";
     if (calcPending) {
         qDebug() << "calculation is already pending!";
+        QMessageBox msgBox;
+        msgBox.setText("Calculation is already pending!");
+        msgBox.exec();
+        return;
     }
+    //QFuture<bool> future = QConcurrent::run(solver->RunSolver, objects);
+    //QObject::connect(calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
+    //watcher.setFuture(future);
+    QFuture<bool> future = QtConcurrent::run(sleepy);
+    connect(&calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
+    calculationWatcher.setFuture(future);
+}
 
+void MainWindow::calcFinished() {
+    qDebug() << "calc finished";
+}
+
+bool sleepy() {
+    QThread::sleep(5); // sleep for 5 seconds;
+    return true;
 }

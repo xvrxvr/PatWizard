@@ -14,14 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    GeometrySolver/gemetrysolver.cpp \
-    wizardscene.cpp
+        wizardscene.cpp
+    #GeometrySolver/gemetrysolver.cpp \
+
 
 HEADERS  += mainwindow.h \
     gr_object.h \
     NetListReader/inp_def.h \
-    GeometrySolver/gemetrysolver.h \
     wizardscene.h
+    #GeometrySolver/gemetrysolver.h \
+
 
 FORMS    += mainwindow.ui
 
