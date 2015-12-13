@@ -2,6 +2,9 @@
 #define INP_DEF_H
 
 #include <QString>
+#include <QStack>
+#include <QMap>
+#include <QTextStream>
 
 class LoadedHandler : public GrObject {
 public:
@@ -11,7 +14,7 @@ public:
 
 struct LoadedValue {
     union {
-        const char* image;
+        QString image;
         LoadedList* list;
     };
     uint32_t options;
@@ -38,8 +41,28 @@ public:
     ReadParser(const char* xpath, ReadEventHandler*);
     ReadParser& operator << (const ReadParser&);
 */
+    void read_file(const QString& file_path, QMap<QString,LoadedList*>& source_map);
+    ReadParser* N(QString tag, std::function<void()> objConstructor);
+    ReadParser* A(QString tag, std::function<void()> objConstructor);
+
 private:
-    QVector<QString> content;
+    LoadedList* loaded_list;       // image of source file
+    QTextStream in;               // to fork with source file while reading
+    QStringList current_str_list; // keeps the list of string splitted from read line
+    bool is_new_line;             // flag to keep source structure of input file
+
+    void parseList(LoadedList* list);
+    void parse_line(QString line, LoadedList list);
+    QString removeEndBrace(const QString& word);
+    QString removeOpenBrace(const QString& word);
+    void lookUpStartOfList();
+    bool hasOpenedBrace(const QString& str);
+    bool hasClosedBrace(const QString& str);
+    bool hasOpenedQuotes(const QString& str);
+    bool hasClosedQuotes(const QString& str);
+//    QStack parse_tag(QString tag);
+//    unsigned current_level;
+//    TreeDefinition* tree;
 };
 
 /*
@@ -67,19 +90,19 @@ private:
 
 class NetListReader : public GrReader {
 public:
-    read() {
+    void read();
+    NetListReader(const QString &file_name);
+private:
+    QString file_name;
+    QMap<QString, LoadedList*> source_map;
 
-        // it is anonymous object
-           ReadParser()
-            .N("library/padStyleDef",  []() {new InpPadStyle}, int opaque = 0 )
-            .N("  padShape",           []() (new InpPadShape} )
-            .A("    padShapeType",     &InpPasShape::shape }
-            .A("    shapeWidth",       &InpPadShape::width )
-            .A("    shapeHeight",      &InpPadShape::height )
-            .read_file
-            ...
-}
 };
 
+class TreeDefinition {
+public:
+    QMap<QString, TreeDefinition*> children;
+    TreeDefinition* parrent;
+    void *();
+};
 #endif // INP_DEF_H
 
