@@ -138,6 +138,7 @@ void MainWindow::sceneScaleChanged(const QString &scale) {
 
 void MainWindow::addConstrModeApply(bool checked) {
     qDebug() << "hi" << checked;
+    drawCircuit();
 }
 
 void MainWindow::calculateConstrains()
@@ -166,4 +167,24 @@ void MainWindow::calcFinished() {
 bool sleepy() {
     QThread::sleep(5); // sleep for 5 seconds;
     return true;
+}
+
+
+void MainWindow::drawCircuit() {
+    delete scene;
+    scene = new WizardScene(fileMenu, this);
+    scene->setSceneRect(QRectF(0, 0, 1000, 1000));
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(toolBox);
+
+    view = new QGraphicsView(scene);
+    layout->addWidget(view);
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(layout);
+
+    setCentralWidget(widget);
+    setWindowTitle(tr("PatWizard"));
+    setUnifiedTitleAndToolBarOnMac(true);
 }

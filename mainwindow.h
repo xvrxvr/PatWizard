@@ -42,6 +42,7 @@ private:
     void createMenus();
     void createToolBar();
     void createToolBox();
+    void drawCircuit();
 
     WizardScene *scene;
     QGraphicsView *view;
