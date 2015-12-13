@@ -61,6 +61,7 @@ private:
 
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;
+    bool calcPending;
     //GemetrySolver* solver;
     //QVector<GrObject*> objects;
     QFutureWatcher<bool> calculationWatcher;

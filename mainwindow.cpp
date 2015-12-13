@@ -32,6 +32,7 @@ MainWindow::MainWindow() {
     setWindowTitle(tr("PatWizard"));
     setUnifiedTitleAndToolBarOnMac(true);
 
+    calcPending = false;
     status = statusBar();
     // Init gemetrySolver. Uncomment once it's implemented.
     //solver = new GemetrySolver();
@@ -143,7 +144,6 @@ void MainWindow::addConstrModeApply(bool checked) {
 
 void MainWindow::calculateConstrains()
 {
-    static bool calcPending = false;
     qDebug() << "calculateConstrains()";
     if (calcPending) {
         qDebug() << "calculation is already pending!";
@@ -155,6 +155,7 @@ void MainWindow::calculateConstrains()
     //QFuture<bool> future = QConcurrent::run(solver->RunSolver, objects);
     //QObject::connect(calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
     //watcher.setFuture(future);
+    calcPending = true;
     QFuture<bool> future = QtConcurrent::run(sleepy);
     connect(&calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
     calculationWatcher.setFuture(future);
@@ -162,11 +163,13 @@ void MainWindow::calculateConstrains()
 
 void MainWindow::calcFinished() {
     qDebug() << "calc finished";
+    bool result = calculationWatcher.future().result();
+    qDebug() << "result is " << result;
 }
 
 bool sleepy() {
     QThread::sleep(5); // sleep for 5 seconds;
-    return true;
+    return false;
 }
 
 
