@@ -4,6 +4,7 @@
 #include <QToolButton>
 #include "wizardscene.h"
 #include "gr_object.h"
+#include "GeometrySolver/gemetrysolver.h"
 
 MainWindow::MainWindow() {
     createActions();
@@ -28,6 +29,9 @@ MainWindow::MainWindow() {
     setUnifiedTitleAndToolBarOnMac(true);
 
     status = statusBar();
+    // Init gemetrySolver. Uncomment once it's implemented.
+    //solver = new GemetrySolver();
+    // TODO: add hardcode init of objects.
 }
 
 
@@ -134,5 +138,10 @@ void MainWindow::addConstrModeApply(bool checked) {
 
 void MainWindow::calculateConstrains()
 {
+    static bool calcPending = false;
     qDebug() << "calculateConstrains()";
+    if (calcPending) {
+        qDebug() << "calculation is already pending!";
+    }
+
 }

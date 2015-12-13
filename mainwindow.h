@@ -2,12 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFutureWatcher>
 
+//Forward decl.
 class WizardScene;
 class GrReaderFabric;
 class GrReader;
 class QToolButton;
 class QButtonGroup;
+class GemetrySolver;
+class GrObject;
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -55,6 +59,9 @@ private:
 
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;
+    GemetrySolver* solver;
+    QVector<GrObject*> objects;
+    QFutureWatcher<bool> calculationWatcher;
 
 /*
     QVector<GrObject*> objects;
