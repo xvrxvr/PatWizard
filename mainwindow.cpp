@@ -1,11 +1,14 @@
 #include "mainwindow.h"
 
+//QT standard library
 #include <QtWidgets>
 #include <QToolButton>
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QThread>
+#include <QGroupBox>
+// proj.specific headers
 #include "wizardscene.h"
 #include "gr_object.h"
 //#include "GeometrySolver/gemetrysolver.h"
@@ -105,9 +108,12 @@ void MainWindow::createMenus() {
 }
 
 
-
 void MainWindow::createToolBox() {
     QGridLayout *layout = new QGridLayout;
+
+    QGroupBox* gbox = makeConstrainGroupBox();
+    layout->addWidget(gbox, 0, 0);
+
     QToolButton *button = new QToolButton;
     button->setDefaultAction(tboxAddConstrainAction);
     layout->addWidget(button);
@@ -118,6 +124,34 @@ void MainWindow::createToolBox() {
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(200);
     toolBox->addItem(itemWidget, tr("Constrain Addition"));
+}
+
+
+QGroupBox* MainWindow::makeConstrainGroupBox() {
+    QGroupBox* box = new QGroupBox(tr("Constrain parameters"));
+    QLabel* typeLabel = new QLabel(tr("Constrain type"));
+
+    constrainTypeCombo = new QComboBox;
+    QStringList types;
+    types << tr("one") << tr("two") << tr("three");  // <-- only for PoC. After testing replace it with right types!
+    constrainTypeCombo->addItems(types);
+
+    QLabel *val1Label = new QLabel(tr("Value1"));
+    constrParam1LEdit = new QLineEdit;
+
+    QLabel *val2Label = new QLabel(tr("Value2"));
+    constrParam2LEdit = new QLineEdit;
+
+    QGridLayout *localLayout = new QGridLayout;
+    localLayout->addWidget(typeLabel, 0, 0);
+    localLayout->addWidget(constrainTypeCombo, 0, 1);
+    localLayout->addWidget(val1Label, 1, 0);
+    localLayout->addWidget(constrParam1LEdit, 1, 1);
+    localLayout->addWidget(val2Label, 2, 0);
+    localLayout->addWidget(constrParam2LEdit, 2, 1);
+
+    box->setLayout(localLayout);
+    return box;
 }
 
 /********************
@@ -186,13 +220,19 @@ void MainWindow::calcFinished() {
 
 void MainWindow::addConstrain() {
     qDebug() << "addConstrain()";
+    // err detection
     if (userMode != addConstrainMode) {
         qDebug() << "[diag] addConstrain:: userMode is invalid, no addition should be done";
         QMessageBox errBox;
         errBox.setText("Cannot add constrain with inactive AddConstrainMode");
         errBox.exec();
+        return;
     }
-    status->showMessage("add Costrain not implemented yet!", 5000);
+
+    QString type = constrainTypeCombo->currentText();
+    qDebug() << "addConstrain::" << type;
+
+    status->showMessage("add Constrain isn't complete!", 5000);
 }
 /*
  * SLOTS impl. END

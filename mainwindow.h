@@ -18,6 +18,8 @@ class QAction;
 class QGraphicsView;
 class QComboBox;
 class QToolBox;
+class QLineEdit;
+class QGroupBox;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -44,6 +46,7 @@ private:
     void createToolBar();
     void createToolBox();
     void drawCircuit();
+    QGroupBox* makeConstrainGroupBox();
 
     Mode userMode;
 
@@ -55,7 +58,11 @@ private:
     QStatusBar *status;
     QToolBar *pointerToolbar;
     QComboBox *sceneScaleCombo;
+
     QToolBox *toolBox;
+    QComboBox *constrainTypeCombo;
+    QLineEdit *constrParam1LEdit;
+    QLineEdit *constrParam2LEdit;
 
     QAction *openFileAction;
     QAction *aboutAction;
