@@ -26,15 +26,16 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    enum Mode { usual=0, addConstrain=1};
+    enum Mode { usualMode=0, addConstrainMode=1};
 
 private slots:
     void openFile();
     void about();
     void sceneScaleChanged(const QString &scale);
-    void addConstrModeApply(bool);
+    void applyAddConstrMode(bool);
     void calculateConstrains();
     void calcFinished();
+    void addConstrain();
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -43,6 +44,8 @@ private:
     void createToolBar();
     void createToolBox();
     void drawCircuit();
+
+    Mode userMode;
 
     WizardScene *scene;
     QGraphicsView *view;
@@ -58,6 +61,7 @@ private:
     QAction *aboutAction;
     QAction *toolbarAddConstrAction;
     QAction *toolbarCalcConstrAction;
+    QAction *tboxAddConstrainAction;
 
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;

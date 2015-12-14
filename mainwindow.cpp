@@ -16,6 +16,8 @@ MainWindow::MainWindow() {
     createMenus();
     createToolBox();
 
+    userMode = usualMode;
+
     scene = new WizardScene(fileMenu, this);
     scene->setSceneRect(QRectF(0, 0, 500, 500));
 
@@ -55,14 +57,19 @@ void MainWindow::createActions() {
     toolbarAddConstrAction = new QAction(this);
     toolbarAddConstrAction->setShortcut(tr("Ctrl+A"));
     toolbarAddConstrAction->setCheckable(true);
-    toolbarAddConstrAction->setIconText(tr("Hi"));
-    connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(addConstrModeApply(bool)));
+    toolbarAddConstrAction->setIconText(tr("AddConstrMode"));
+    connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(applyAddConstrMode(bool)));
 
     // add action for calcConstrains ToolButton/
     toolbarCalcConstrAction = new QAction(this);
     toolbarCalcConstrAction->setShortcut(tr("Ctrl+C"));
     toolbarCalcConstrAction->setIconText(tr("Calc"));
     connect(toolbarCalcConstrAction, SIGNAL(triggered()), this, SLOT(calculateConstrains()));
+
+    // add action for toolbox button "Add Constrain"
+    tboxAddConstrainAction = new QAction(this);
+    tboxAddConstrainAction->setIconText(tr("Add Constrain"));
+    connect(tboxAddConstrainAction, SIGNAL(triggered()), this, SLOT(addConstrain()));
 }
 
 
@@ -102,7 +109,7 @@ void MainWindow::createMenus() {
 void MainWindow::createToolBox() {
     QGridLayout *layout = new QGridLayout;
     QToolButton *button = new QToolButton;
-    button->setDefaultAction(toolbarAddConstrAction);
+    button->setDefaultAction(tboxAddConstrainAction);
     layout->addWidget(button);
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(layout);
@@ -110,9 +117,12 @@ void MainWindow::createToolBox() {
     toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(200);
-    toolBox->addItem(itemWidget, tr("What?"));
+    toolBox->addItem(itemWidget, tr("Constrain Addition"));
 }
 
+/********************
+ * SLOTS impl. section
+ *******************/
 
 void MainWindow::openFile() {
     QString fileName =
@@ -137,9 +147,14 @@ void MainWindow::sceneScaleChanged(const QString &scale) {
     view->scale(newScale, newScale);
 }
 
-void MainWindow::addConstrModeApply(bool checked) {
-    qDebug() << "hi" << checked;
-    drawCircuit();
+void MainWindow::applyAddConstrMode(bool checked) {
+    qDebug() << "applyAddConstrMode::" << checked;
+    if (checked) {
+        userMode = addConstrainMode;
+    } else {
+        userMode = usualMode;
+    }
+    //drawCircuit(); // <-- here? really?
 }
 
 void MainWindow::calculateConstrains()
@@ -152,6 +167,8 @@ void MainWindow::calculateConstrains()
         msgBox.exec();
         return;
     }
+    //commented due to incomplete implementation of GemetrySolver.
+    //uncomment once it's implemented and tested.
     //QFuture<bool> future = QConcurrent::run(solver->RunSolver, objects);
     //QObject::connect(calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
     //watcher.setFuture(future);
@@ -166,6 +183,20 @@ void MainWindow::calcFinished() {
     bool result = calculationWatcher.future().result();
     qDebug() << "result is " << result;
 }
+
+void MainWindow::addConstrain() {
+    qDebug() << "addConstrain()";
+    if (userMode != addConstrainMode) {
+        qDebug() << "[diag] addConstrain:: userMode is invalid, no addition should be done";
+        QMessageBox errBox;
+        errBox.setText("Cannot add constrain with inactive AddConstrainMode");
+        errBox.exec();
+    }
+    status->showMessage("add Costrain not implemented yet!", 5000);
+}
+/*
+ * SLOTS impl. END
+ */
 
 bool sleepy() {
     QThread::sleep(5); // sleep for 5 seconds;
@@ -213,7 +244,7 @@ void MainWindow::drawCircuit() {
                 y = shape.y;
                 break;
             case GrShape::ArcTo:
-                scene->addEllipse()
+                //scene->addEllipse();
                 break;
             case GrShape::ClosePath:
             default:
