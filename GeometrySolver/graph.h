@@ -1,6 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include "gr_object.h"
+#include <QStack>
 
 struct Node{
     geom_index host;
@@ -20,7 +21,7 @@ class Graph {
         ~Graph();
         bool isConnected(Node, Node);//Is there in Node_1 Node_2?
         void addEdge(Node A, Node B, Constrain C);
-        //void DFS(int , int);
+        void DFS(geom_index , geom_index);
 };
 
 

@@ -1,7 +1,7 @@
 #include "graph.h"
 
 Graph::Graph(int size) {
-    int i, j;
+    int i;
     if (size < 2) n = 2;
     else n = size;
     nodes = new Node[n];
@@ -52,4 +52,36 @@ bool Graph::isConnected(Node A, Node B) {
     }
 
     return res;
+}
+
+void Graph::DFS(geom_index x, geom_index required)
+{
+    QStack<Node> stack;
+    bool *visited = new bool[n+1];
+    geom_index i;
+
+    for ( i = 0; i <= n ; ++i )
+    {
+        visited[i] = false;
+    }
+    stack.push(nodes[x]);
+    visited[x] = true;
+    if( x == required )
+        return;
+
+    while( !stack.isEmpty() )
+    {
+        geom_index k = stack.pop().host;
+        if ( k == required )
+            break;
+
+        for( i = n ; i >= 0 ; --i)
+            if ( isConnected(nodes[k], nodes[i]) && !visited[i])
+            {
+                stack.push(nodes[i]);
+                visited[i] == true;
+            }
+    }
+
+    delete [] visited;
 }

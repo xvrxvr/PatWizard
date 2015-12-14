@@ -3,6 +3,7 @@
 #include "gr_object.h"
 #include <cmath>
 #include <QStack>
+#include <QStack>
 
 //Show difference between old and new coordinates of GrShape
 struct delta{
