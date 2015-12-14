@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+    #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -63,7 +63,7 @@ private:
     QToolButton *calcConstrainsButton;
     bool calcPending;
     //GemetrySolver* solver;
-    //QVector<GrObject*> objects;
+    QVector<GrObject*> objects;
     QFutureWatcher<bool> calculationWatcher;
 
 /*

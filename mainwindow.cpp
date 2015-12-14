@@ -174,5 +174,51 @@ bool sleepy() {
 
 
 void MainWindow::drawCircuit() {
+    const double SHIFT = 100;
+    double min_x, min_y, max_x, max_y;
+
+    if (objects.length() == 0)
+        return;
+
+    min_x = max_x = objects[0]->get_image()[0].x;
+    min_y = max_y = objects[0]->get_image()[0].y;
+
+    foreach (GrObject* obj, objects) {
+        foreach (GrShape shape, obj->get_image()) {
+            min_x = qMin(min_x, shape.x);
+            min_y = qMin(min_y, shape.y);
+            max_x = qMax(max_x, shape.x);
+            max_y = qMax(max_y, shape.y);
+        }
+    }
+
     scene->clear();
+    scene->setSceneRect(QRectF(0, 0, max_x - min_x + 2 * SHIFT, max_y - min_y + 2 * SHIFT));
+
+    auto getSceneX = [min_x, SHIFT](double x){ return x - min_x + SHIFT; };
+    auto getSceneY = [max_y, SHIFT](double y){ return qAbs(y - max_y) + SHIFT; };
+    foreach (GrObject* obj, objects) {
+        double x, y;
+        foreach (GrShape shape, obj->get_image()) {
+            switch (shape.type) {
+            case GrShape::MoveTo:
+                x = shape.x;
+                y = shape.y;
+                break;
+            case GrShape::LineTo:
+                if (!shape.options && GrShape::Hidden)
+                    scene->addLine(getSceneX(x), getSceneY(y),
+                                   getSceneX(shape.x), getSceneY(shape.y));
+                x = shape.x;
+                y = shape.y;
+                break;
+            case GrShape::ArcTo:
+                scene->addEllipse()
+                break;
+            case GrShape::ClosePath:
+            default:
+                break;
+            }
+        }
+    }
 }
