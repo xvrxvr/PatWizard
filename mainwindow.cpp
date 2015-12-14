@@ -214,6 +214,8 @@ void MainWindow::drawCircuit() {
     min_x = max_x = objects[0]->get_image()[0].x;
     min_y = max_y = objects[0]->get_image()[0].y;
 
+    const double UNDEF = min_x - SHIFT - 10;
+
     foreach (GrObject* obj, objects) {
         foreach (GrShape shape, obj->get_image()) {
             min_x = qMin(min_x, shape.x);
@@ -230,25 +232,62 @@ void MainWindow::drawCircuit() {
     auto getSceneY = [max_y, SHIFT](double y){ return qAbs(y - max_y) + SHIFT; };
     foreach (GrObject* obj, objects) {
         double x, y;
+        double ac_x = UNDEF, ac_y = UNDEF;
+        double ac_x2 = UNDEF, ac_y2 = UNDEF;
         foreach (GrShape shape, obj->get_image()) {
             switch (shape.type) {
+            
             case GrShape::MoveTo:
                 x = shape.x;
                 y = shape.y;
                 break;
+            
             case GrShape::LineTo:
-                if (!shape.options && GrShape::Hidden)
-                    scene->addLine(getSceneX(x), getSceneY(y),
-                                   getSceneX(shape.x), getSceneY(shape.y));
+                if (!shape.options && GrShape::Hidden) {
+                    WizardLineItem *item = new WizardLineItem(getSceneX(x),
+                                                              getSceneY(y),
+                                                              getSceneX(shape.x),
+                                                              getSceneY(shape.y));
+                    scene->addItem(item);
+                }
                 x = shape.x;
                 y = shape.y;
                 break;
+
+            case GrShape::ArcCenter:
+                ac_x = shape.x;
+                ac_y = shape.y;
+                break;
+
+            case GrShape::ArcCenter2:
+                ac_x2 = shape.x;
+                ac_y2 = shape.y;
+                break;
+            
             case GrShape::ArcTo:
-                //scene->addEllipse();
+                if (!shape.options && GrShape::Hidden) {
+                    WizardArcItem* item = new WizardArcItem(x, y, x, x);
+                    item->setStartAngle(x);
+                    item->setSpanAngle(x);
+                    scene->addItem(item);
+                }
+                x = shape.x;
+                y = shape.y;
+                ac_x = ac_x2 = ac_y = ac_y2 = UNDEF;
                 break;
+            
+            case GrShape::Text:
+                if (!shape.options && GrShape::Hidden) {
+                    QGraphicsTextItem * io = new QGraphicsTextItem;
+                    io->setPos(getSceneX(shape.x), getSceneY(shape.y));
+                    io->setPlainText(shape.text);
+                    scene->addItem(io);
+                }
+
             case GrShape::ClosePath:
-            default:
                 break;
+            //default:
+                //break;
             }
         }
     }
