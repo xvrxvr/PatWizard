@@ -149,20 +149,5 @@ void MainWindow::calculateConstrains()
 
 
 void MainWindow::drawCircuit() {
-    delete scene;
-    scene = new WizardScene(fileMenu, this);
-    scene->setSceneRect(QRectF(0, 0, 1000, 1000));
-
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(toolBox);
-
-    view = new QGraphicsView(scene);
-    layout->addWidget(view);
-
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
-
-    setCentralWidget(widget);
-    setWindowTitle(tr("PatWizard"));
-    setUnifiedTitleAndToolBarOnMac(true);
+    scene->clear();
 }
