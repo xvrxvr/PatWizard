@@ -41,7 +41,6 @@ struct rectangle{
 
 };
 
-
 class GemetrySolver
 {
 public:

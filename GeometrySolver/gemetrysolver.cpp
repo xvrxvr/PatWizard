@@ -1,4 +1,6 @@
 #include "gemetrysolver.h"
+#include "graph.h"
+
 geom_index GemetrySolver::FindFixed(QVector< GrShape> vector_of_shapes)
 {
     geom_index res = 0;
