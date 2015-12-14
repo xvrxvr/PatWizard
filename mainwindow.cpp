@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QThread>
 #include <QGroupBox>
+#include <QDoubleValidator>
+#include <QDoubleSpinBox>
 // proj.specific headers
 #include "wizardscene.h"
 #include "gr_object.h"
@@ -136,19 +138,22 @@ QGroupBox* MainWindow::makeConstrainGroupBox() {
     types << tr("one") << tr("two") << tr("three");  // <-- only for PoC. After testing replace it with right types!
     constrainTypeCombo->addItems(types);
 
+    QDoubleValidator *valid = new QDoubleValidator(0.0, qInf(), 2, this);
+    valid->setNotation(QDoubleValidator::StandardNotation);
+
     QLabel *val1Label = new QLabel(tr("Value1"));
-    constrParam1LEdit = new QLineEdit;
+    constrParam1SBox = new QDoubleSpinBox;
 
     QLabel *val2Label = new QLabel(tr("Value2"));
-    constrParam2LEdit = new QLineEdit;
+    constrParam2SBox = new QDoubleSpinBox;
 
     QGridLayout *localLayout = new QGridLayout;
     localLayout->addWidget(typeLabel, 0, 0);
     localLayout->addWidget(constrainTypeCombo, 0, 1);
     localLayout->addWidget(val1Label, 1, 0);
-    localLayout->addWidget(constrParam1LEdit, 1, 1);
+    localLayout->addWidget(constrParam1SBox, 1, 1);
     localLayout->addWidget(val2Label, 2, 0);
-    localLayout->addWidget(constrParam2LEdit, 2, 1);
+    localLayout->addWidget(constrParam2SBox, 2, 1);
 
     box->setLayout(localLayout);
     return box;
@@ -161,8 +166,6 @@ QGroupBox* MainWindow::makeConstrainGroupBox() {
 void MainWindow::openFile() {
     QString fileName =
             QFileDialog::getOpenFileName(this, tr("Open PCB File"), ".", tr("PCB files(*.pcb)"));
-    //fabric = new GrRdrFabricImp<GR>(filename);
-    //reader = fabric->create();
 }
 
 
@@ -231,6 +234,10 @@ void MainWindow::addConstrain() {
 
     QString type = constrainTypeCombo->currentText();
     qDebug() << "addConstrain::" << type;
+    double val1 = constrParam1SBox->value();
+    double val2 = constrParam2SBox->value();
+
+    qDebug() << "val1: " << val1 << "; val2 = " << val2 << ";";
 
     status->showMessage("add Constrain isn't complete!", 5000);
 }

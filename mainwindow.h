@@ -19,6 +19,7 @@ class QGraphicsView;
 class QComboBox;
 class QToolBox;
 class QLineEdit;
+class QDoubleSpinBox;
 class QGroupBox;
 QT_END_NAMESPACE
 
@@ -61,8 +62,8 @@ private:
 
     QToolBox *toolBox;
     QComboBox *constrainTypeCombo;
-    QLineEdit *constrParam1LEdit;
-    QLineEdit *constrParam2LEdit;
+    QDoubleSpinBox *constrParam1SBox;
+    QDoubleSpinBox *constrParam2SBox;
 
     QAction *openFileAction;
     QAction *aboutAction;
