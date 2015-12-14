@@ -306,6 +306,13 @@ void MainWindow::drawCircuit() {
             
             case GrShape::ArcTo:
                 if (!shape.options && GrShape::Hidden) {
+                    double center_x, center_y;
+                    bool is_circle = ac_x2 == UNDEF;
+                    center_x = is_circle ? ac_x : ac_x + (ac_x2 - ac_x) / 2;
+                    center_y = is_circle ? ac_y : ac_y + (ac_y2 - ac_y) / 2;
+
+
+
                     WizardArcItem* item = new WizardArcItem(x, y, x, x);
                     item->setStartAngle(x);
                     item->setSpanAngle(x);
