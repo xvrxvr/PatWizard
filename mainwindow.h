@@ -34,6 +34,7 @@ private slots:
     void sceneScaleChanged(const QString &scale);
     void addConstrModeApply(bool);
     void calculateConstrains();
+    void calcFinished();
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -60,8 +61,9 @@ private:
 
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;
-    GemetrySolver* solver;
-    QVector<GrObject*> objects;
+    bool calcPending;
+    //GemetrySolver* solver;
+    //QVector<GrObject*> objects;
     QFutureWatcher<bool> calculationWatcher;
 
 /*
@@ -74,5 +76,8 @@ private:
 */
 
 };
+
+// added for emulating async function call.
+bool sleepy();
 
 #endif // MAINWINDOW_H
