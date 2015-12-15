@@ -23,12 +23,17 @@ Graph::~Graph() {
     delete [] nodes;
 }
 
-void Graph::addEdge(Node A, Node B, Constrain C) {
-    A.constr.append(C);
-    A.successors.append(C.obj1);
-
-    B.constr.append(C);
-    A.successors.append(C.obj2);
+void Graph::addEdge(geom_index A, geom_index B, Constrain C) {
+    if (C.obj1 == B){
+        nodes[A].successors.append(C.obj1);
+        nodes[B].successors.append(C.obj2);
+    }
+    else {
+        nodes[A].successors.append(C.obj2);
+        nodes[B].successors.append(C.obj1);
+    }
+    nodes[B].constr.append(C);
+    nodes[A].constr.append(C);
 }
 
 bool Graph::isConnected(Node A, Node B) {

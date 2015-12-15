@@ -21,7 +21,7 @@ class Graph {
         Graph(int size = 2);
         ~Graph();
         bool isConnected(Node, Node);//Is there in Node_1 Node_2?
-        void addEdge(Node A, Node B, Constrain C);
+        void addEdge(geom_index A, geom_index B, Constrain C);
         void DFS(geom_index , geom_index);
         //Depth first numbering
         void DFN(int root);

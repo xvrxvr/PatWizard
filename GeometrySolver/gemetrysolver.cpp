@@ -18,16 +18,24 @@ bool GemetrySolver::RunSolver (QVector <GrObject> gr_objects){
     QVector<QVector <delta> > local_delta;
     QVector< rectangle > possible_solutions;
 
-    //Initializing class fields
-
-
     //Select micro in macro
     for (int i = 0; i < gr_objects.size(); ++i)
     {
         GrObject gr_object = gr_objects.at(i);
         vector_of_shapes = gr_object.get_image();
+        //Fullfill the graph
+        Graph graph(vector_of_shapes.length());
+
+        for (int j = 0; j < gr_object.get_constrains().size(); ++j)
+        {
+           Constrain constr = gr_object.get_constrains().at(j);
+           graph.addEdge(constr.obj1, constr.obj2, constr);
+        }
+
+        //DFS for preparing starting searching areas
         geom_index fixed_point = FindFixed( vector_of_shapes);
-        QVector< Constrain > miserable_constr;
+
+//        QVector< Constrain > miserable_constr;
         //For current micro obkect in macro object select constrain
         //Need to add search of fix points.
         for (int j = 0; j < gr_object.get_constrains().size(); ++j)
@@ -85,10 +93,10 @@ bool GemetrySolver::RunSolver (QVector <GrObject> gr_objects){
              else
              {
                  //Constrains for standalone processing
-                 miserable_constr.append(constr);
+                 //miserable_constr.append(constr);
              }
         }/*Constraints cycle*/
-        for( int j = 0 ; j <= miserable_constr.length() ; ++j )
+        //for( int j = 0 ; j <= miserable_constr.length() ; ++j )
         {
             //if ( vector_of_shapes.at(constr.obj1) )
         }
