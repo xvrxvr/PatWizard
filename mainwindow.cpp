@@ -4,6 +4,7 @@
 #include <QToolButton>
 #include "wizardscene.h"
 #include "gr_object.h"
+#include <NetListReader/inp_def.h>
 
 MainWindow::MainWindow() {
     createActions();
@@ -110,6 +111,14 @@ void MainWindow::openFile() {
             QFileDialog::getOpenFileName(this, tr("Open PCB File"), ".", tr("PCB files(*.pcb)"));
     //fabric = new GrRdrFabricImp<GR>(filename);
     //reader = fabric->create();
+    QMap<QString, QString> config;
+    config["file"] = fileName;
+
+    this->fabrics = GrReaderFabric::list_all();
+    this->fabric = fabrics.first(); // change to proper one
+    this->gr_reader = fabric->create();
+    gr_reader->read(config);
+    gr_reader->update();
 }
 
 

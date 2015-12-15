@@ -2,10 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <gr_object.h>
 
 class WizardScene;
 class GrReaderFabric;
-class GrReader;
+class GrReaderImpl;
 class QToolButton;
 class QButtonGroup;
 
@@ -65,6 +66,10 @@ private:
     }
 */
 
+    // NetListReader objects
+    QMap<QString,GrReaderFabric*> fabrics;
+    GrReaderFabric* fabric;
+    GrReader* gr_reader;
 };
 
 #endif // MAINWINDOW_H
