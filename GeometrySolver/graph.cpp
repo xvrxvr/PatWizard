@@ -177,3 +177,63 @@ list< list<geom_index> >Graph::DFSCycle(geom_index u, geom_index endV, QVector<E
         }
     }
 }
+bool compare(list<geom_index> list1, list<geom_index> list2){
+    return(list1.size() > list2.size());
+}
+
+
+void Tree::BuildTreeCycle(list<list <geom_index> > allCycles){
+    allCycles.sort(compare);
+    list<Tree*> tree_elem;
+    list<Tree*>::iterator itr = tree_elem.begin();
+    list<list<geom_index> >::iterator itr_cyc = allCycles.begin();
+    tree_elem.push_back(this);
+    for(int i = 0; i < allCycles.size(); i++)
+    {
+        for(int j = tree_elem.size() - 1 ; j >= 0; j++)
+        {
+            advance(itr,j);
+            advance(itr_cyc,j);
+            //if(itr->IsContain(*itr_cyc))
+            //    itr->AddVertex(*itr_cyc);
+        }
+
+    }
+
+
+
+}
+void Tree::AddVertex(list<geom_index> temp){
+    Tree* newLeaf = new Tree(temp);
+    sons.append(newLeaf);
+    newLeaf->parent = this;
+}
+
+bool Tree::IsContain(list<geom_index> temp){
+    int res = 0;
+    if(cycle.size() >= temp.size())
+        return false;
+    for(int i = 0; i < cycle.size(); i++)
+    {
+        for(int j; j < temp.size() - 1; j++)
+        {
+            //if (cycle[i] == temp[j])
+            //    res += 1;
+        }
+
+    }
+    if (res == temp.size())
+        return true;
+}
+
+Tree::Tree(list<geom_index> top_cycle) {
+//    for (int i = 0; i < n; ++i)
+//    delete [] nodes[i];
+    cycle = top_cycle;
+    parent = NULL;
+}
+
+Tree::~Tree() {
+//    for (int i = 0; i < n; ++i)
+//    delete [] nodes[i];
+}

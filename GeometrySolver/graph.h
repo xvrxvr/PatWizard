@@ -19,6 +19,19 @@ struct Edge{
     geom_index v1, v2;
 };
 
+class Tree
+{
+public:
+    list<geom_index> cycle;
+    Tree* parent;
+    QVector<Tree*> sons;
+    void AddVertex(list<geom_index>);
+    bool IsContain(list<geom_index>);
+    void BuildTreeCycle(list<list <geom_index> > cycles);
+    Tree(): parent(NULL){}
+    Tree(list<geom_index>);
+    ~Tree();
+};
 
 class Graph {
     private:

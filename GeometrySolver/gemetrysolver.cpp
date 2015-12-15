@@ -36,6 +36,14 @@ bool GemetrySolver::RunSolver (QVector <GrObject> gr_objects){
         geom_index fixed_point = FindFixed( vector_of_shapes);
         graph.DFN(fixed_point);
         list< list<geom_index> > allCycles = graph.cycleSearch();
+        list<geom_index> globalCycle;
+        for ( int i = 0 ; i < vector_of_shapes.length(); ++i)
+        {
+           globalCycle.push_back(i);
+        }
+        Tree GlobalTree(globalCycle);
+        GlobalTree.BuildTreeCycle(allCycles);
+
 
 
 //        QVector< Constrain > miserable_constr;
