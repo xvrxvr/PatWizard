@@ -15,7 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     GeometrySolver/gemetrysolver.cpp \
-    NetListReader/inp_def.cpp
+    NetListReader/inp_def.cpp \
     wizardscene.cpp
 
 HEADERS  += mainwindow.h \
