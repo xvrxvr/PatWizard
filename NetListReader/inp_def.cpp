@@ -186,8 +186,8 @@ void NetListReader::printToFile(const QString &file_path) const {
 }
 
 QString LoadedValue::dump(QString indent = "") const {
-    QString str;
-    QTextStream out(&str);
+    QString out_str;
+    QTextStream out(&out_str);
     if (this->options & this->O_NewLine)
         out << endl << indent;
     else
@@ -201,18 +201,20 @@ QString LoadedValue::dump(QString indent = "") const {
     if (this->options & this->O_End)
         out << ")";
 
+    // TODO set the following flags while reading
 //    if (this->options & this->O_EndWithSpace)
 //        out << " )";
 
+    // TODO indent--
 //    if (this->options & this->O_EndWithNewLine)
 //        out << endl << indent << ")";
 
-    return *out.string();
+    return out_str;
 }
 
 QString LoadedList::dump(QString indent = "") const {
-    QString str;
-    QTextStream out(&str);
+    QString out_str;
+    QTextStream out(&out_str);
     out << "(" << this->tag;
     for (QVector<LoadedValue>::ConstIterator it = this->values.begin();
          it != this->values.end();
@@ -220,7 +222,7 @@ QString LoadedList::dump(QString indent = "") const {
         out << it->dump(indent + "  ");
     }
 
-    return *out.string();
+    return out_str;
 }
 
 GrReaderFabric* GrReaderFabric::root;
