@@ -45,6 +45,18 @@ MainWindow::MainWindow() {
     // Init gemetrySolver. Uncomment once it's implemented.
     //solver = new GemetrySolver();
     // TODO: add hardcode init of objects.
+
+    // very wise code.
+    comboToCTypeMap.insert("PointCoord", Constrain::PointCoord);
+    comboToCTypeMap.insert("PointToPoint", Constrain::PointToPoint);
+    comboToCTypeMap.insert("LineToPoint", Constrain::LineToPoint);
+    comboToCTypeMap.insert("ArcToPoint", Constrain::ArcToPoint);
+    comboToCTypeMap.insert("LineToLine", Constrain::LineToLine);
+    comboToCTypeMap.insert("LineAngle", Constrain::LineAngle);
+    comboToCTypeMap.insert("ArcToArc", Constrain::ArcToArc);
+    comboToCTypeMap.insert("ArcAngle", Constrain::ArcAngle);
+    comboToCTypeMap.insert("ArcSweep", Constrain::ArcSweep);
+    comboToCTypeMap.insert("ArcRadius", Constrain::ArcRadius);
 }
 
 
@@ -136,7 +148,10 @@ QGroupBox* MainWindow::makeConstrainGroupBox() {
 
     constrainTypeCombo = new QComboBox;
     QStringList types;
-    types << tr("one") << tr("two") << tr("three");  // <-- only for PoC. After testing replace it with right types!
+    //types << tr("one") << tr("two") << tr("three");  // <-- only for PoC. After testing replace it with right types!
+    types << tr("PointCoord") << tr("PointToPoint") << tr("LineToPoint") <<
+             tr("ArcToPoint") << tr("LineToPoint") << tr("ArcToPoint") << tr("LineToLine") <<
+             tr("LineAngle") << tr("ArcToArc") << tr("ArcAngle") << tr("ArcSweep") << tr("ArcRadius");
     constrainTypeCombo->addItems(types);
 
     QDoubleValidator *valid = new QDoubleValidator(0.0, qInf(), 2, this);
