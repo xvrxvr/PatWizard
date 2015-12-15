@@ -34,6 +34,8 @@ void Graph::addEdge(geom_index A, geom_index B, Constrain C) {
     }
     nodes[B].constr.append(C);
     nodes[A].constr.append(C);
+
+    edges.append({A, B});
 }
 
 bool Graph::isConnected(Node A, Node B) {
@@ -120,4 +122,58 @@ void Graph::DFN(int root)
         }
     }
 
+}
+
+list< list< geom_index> > Graph::cycleSearch()
+{
+    int *color = new int[n];
+
+    for(int i = 0 ; i < n ; ++i)
+    {
+        for(int k = 0; k < n; ++k)
+        {
+            color[k] = 1;
+        }
+
+        list< geom_index >  cycle;
+
+
+        cycle.push_back((unsigned int)i);
+        return DFSCycle(i, i, edges, color, -1 , cycle);
+    }
+}
+
+list< list<geom_index> >Graph::DFSCycle(geom_index u, geom_index endV, QVector<Edge> edges, int *color, int unavailible, list<geom_index> cycle)
+{
+    list<list <geom_index> > res;
+    if (u != endV)
+    {
+        color[u] = 2;
+    }
+    else if( cycle.size() >= 2 )
+    {
+        res.push_back(cycle);
+        return res;
+    }
+    for( int w = 0 ; w < edges.length() ; ++w)
+    {
+        if ( w == unavailible )
+        {
+            continue;
+        }
+        if ( color[edges.at(w).v2] == 1 && edges.at(w).v1 == u )
+        {
+            list<geom_index> cycleNEW(cycle);
+            cycleNEW.push_back(edges.at(w).v2);
+            DFSCycle(edges.at(w).v2, endV, edges, color, w, cycleNEW);
+            color[edges.at(w).v2] = 1;
+        }
+        else if ( color[edges.at(w).v1] == 1 && edges.at(w).v1 == u )
+        {
+            list<geom_index> cycleNEW(cycle);
+            cycleNEW.push_back(edges.at(w).v1);
+            DFSCycle(edges.at(w).v1, endV, edges, color, w, cycleNEW);
+            color[edges.at(w).v1] = 1;
+        }
+    }
 }
