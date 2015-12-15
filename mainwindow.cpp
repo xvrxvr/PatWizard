@@ -281,7 +281,7 @@ void MainWindow::drawCircuit() {
         double x, y;
         double ac_x = UNDEF, ac_y = UNDEF;
         double ac_x2 = UNDEF, ac_y2 = UNDEF;
-        GrShape::type prev_type;
+        GrShape::Type prev_type;
 
         foreach (GrShape shape, obj->get_image()) {
             switch (shape.type) {
