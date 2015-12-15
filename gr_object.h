@@ -17,9 +17,7 @@ struct GrShape {
         ClosePath,
         Text
     } type;
-    double x1,y1;
-    //TODO: удалить поле
-    uint32_t x2,y2;//ненужное т.к. все точки есть в векторе GrShape-ов
+    double x,y;
     uint32_t options;
     const char* text;
     uint8_t color;

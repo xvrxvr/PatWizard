@@ -23,6 +23,7 @@ class Graph {
         bool isConnected(Node, Node);//Is there in Node_1 Node_2?
         void addEdge(Node A, Node B, Constrain C);
         void DFS(geom_index , geom_index);
+        //Depth first numbering
         void DFN(int root);
 };
 
