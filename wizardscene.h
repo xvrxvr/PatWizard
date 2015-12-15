@@ -10,6 +10,7 @@ class QMenu;
 class QColor;
 class QFont;
 class QPointF;
+class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
 
@@ -33,10 +34,13 @@ private:
 class WizardLineItem: public QGraphicsLineItem {
 public:
     WizardLineItem(qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem *parent = 0) :
-        QGraphicsLineItem(x1, y1, x2, y2, parent), p1(x1, y1), p2(x2, y2) {}
+        QGraphicsLineItem(x1, y1, x2, y2, parent), p1(x1, y1), p2(x2, y2) {
+        this->setFlag(QGraphicsItem::ItemIsSelectable);
+    };
 
 protected:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
+    void mousePressEvent (QGraphicsSceneMouseEvent* event);
 
 private:
     QPointF p1, p2;

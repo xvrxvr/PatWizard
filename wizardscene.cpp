@@ -1,3 +1,5 @@
+#include <QGraphicsSceneMouseEvent>
+#include <QDebug>
 #include "wizardscene.h"
 
 WizardScene::WizardScene(QMenu* itemMenu_, QObject* parent)
@@ -17,6 +19,17 @@ void WizardScene::setLineColor(const QColor &color)
 void WizardLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->setPen(pen());
     painter->drawLine(p1, p2);
+}
+
+void WizardLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        return;
+    }
+    qDebug() << "selected whole item!";
+    this->setSelected(true);
+    this->setPen(QPen(Qt::blue));
+    qDebug() << this->isSelected();
 }
 
 
