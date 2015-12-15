@@ -138,7 +138,7 @@ bool GemetrySolver::RunSolver (QVector <GrObject> gr_objects){
         switch (constr.type) {
             case Constrain::PointCoord:
                 //This point can not be shift, expose flag in true
-                obj1.fix = true;//TODO: сделать новую структуру с фиксированными точками
+                //obj1.fix = true;//TODO: сделать новую структуру с фиксированными точками
                 return true;
             case Constrain::PointToPoint:
                 //Check distance between points

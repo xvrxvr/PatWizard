@@ -13,6 +13,7 @@
 // proj.specific headers
 #include "wizardscene.h"
 #include "gr_object.h"
+#include "grobjectstub.h"
 //#include "GeometrySolver/gemetrysolver.h"
 
 MainWindow::MainWindow() {
@@ -232,8 +233,42 @@ void MainWindow::calculateConstrains()
 
 void MainWindow::calcFinished() {
     qDebug() << "calc finished";
+    calcPending = false;
     bool result = calculationWatcher.future().result();
     qDebug() << "result is " << result;
+
+    // only for testing needs! Remove it once the rest complete their tasks
+    qDebug() << "[dbg] constructin grShapes";
+    GrShape sh1 = { GrShape::MoveTo, // type
+                    10,   // x
+                    10,   // y
+                    GrShape::FixedPoint,    //options
+                    "t",         // text
+                    0x3,         // color
+                    0x3          // shape
+                  };
+    GrShape sh2 = { GrShape::LineTo,
+                    100,
+                    100,
+                    GrShape::FixedPoint,
+                    "f",
+                    0x4,
+                    0x45
+                  };
+    GrShape sh3 = { GrShape::ClosePath,
+                    100,
+                    100,
+                    GrShape::FixedPoint,
+                    "f",
+                    0x4,
+                    0x45
+                  };
+    GrObjectStub* stub = new GrObjectStub;
+    stub->addShape(sh1);
+    stub->addShape(sh2);
+    stub->addShape(sh3);
+    objects.push_back(stub);
+    drawCircuit();
 }
 
 void MainWindow::addConstrain() {
@@ -249,24 +284,27 @@ void MainWindow::addConstrain() {
 
     QString type = constrainTypeCombo->currentText();
     qDebug() << "addConstrain::" << type;
+    Constrain::TypeC ctype = comboToCTypeMap[type];
+    qDebug() << "ctype: " << ctype;
     double val1 = constrParam1SBox->value();
     double val2 = constrParam2SBox->value();
 
     qDebug() << "val1: " << val1 << "; val2 = " << val2 << ";";
 
-    status->showMessage("add Constrain isn't complete!", 5000);
+    status->showMessage("addConstrain:: no real addition!", 5000);
 }
-/*
+/******************
  * SLOTS impl. END
- */
+ *****************/
 
 bool sleepy() {
-    QThread::sleep(5); // sleep for 5 seconds;
+    QThread::sleep(3); // sleep for 5 seconds;
     return false;
 }
 
 
 void MainWindow::drawCircuit() {
+    qDebug() << "hi!";
     const double SHIFT = 100;
     double min_x, min_y, max_x, max_y;
 
@@ -299,6 +337,7 @@ void MainWindow::drawCircuit() {
         GrShape::Type prev_type;
 
         foreach (GrShape shape, obj->get_image()) {
+            qDebug() << "shape.type = " << shape.type;
             switch (shape.type) {
             
             case GrShape::MoveTo:
@@ -307,7 +346,8 @@ void MainWindow::drawCircuit() {
                 break;
             
             case GrShape::LineTo:
-                if (!shape.options && GrShape::Hidden) {
+                qDebug() << "LineTo!";
+                if (!(shape.options & GrShape::Hidden)) {
                     WizardLineItem *item = new WizardLineItem(getSceneX(x),
                         getSceneY(y), getSceneX(shape.x), getSceneY(shape.y));
                     scene->addItem(item);
@@ -366,4 +406,6 @@ void MainWindow::drawCircuit() {
             prev_type = shape.type;
         }
     }
+    scene->update();
+    qDebug() << "bye!";
 }
