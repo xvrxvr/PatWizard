@@ -59,7 +59,7 @@ public:
         QGraphicsEllipseItem(x - RADIUS, y - RADIUS, RADIUS, RADIUS, parent) {}
 
 private:
-    const qreal RADIUS;
+    static const qreal RADIUS;
 };
 
 #endif // WIZARDSCENE_H
