@@ -1,21 +1,13 @@
-#include "inp_def.h"
-#include "../gr_object.h" // DEF_GR
-#include <QFile>
-#include <QTextStream>
-#include <QString>
-#include <QStack>
-#include <QMap>
-#include <cassert>
+#include <NetListReader/inp_def.h>
 
-DEF_GR(NetListReader); // Fabric registration
-
-ReadParser::read_file(const QString &file_path, QMap<QString, LoadedList *> &source_map) {
+void ReadParser::read_file(const QString &file_path, QMap<QString, LoadedList *> &source_map) {
+    this->file_path = file_path;
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
-    this->in = QTextStream(&file);
-    while (!this->in.atEnd()) {
+    this->in = new QTextStream(&file);
+    while (!this->in->atEnd()) {
         this->loaded_list = new LoadedList;
         lookUpStartOfList();
         parseList(this->loaded_list);
@@ -25,30 +17,34 @@ ReadParser::read_file(const QString &file_path, QMap<QString, LoadedList *> &sou
 
 void ReadParser::lookUpStartOfList() {
     while (this->current_str_list.isEmpty() || !hasOpenedBrace(this->current_str_list.front())) {
-        QString line = this->in.readLine();
+        QString line = this->in->readLine();
         this->current_str_list = line.split(" ", QString::SkipEmptyParts);
     }
     return;
 }
 
-ReadParser::parseList(LoadedList* loaded_list) {
+void ReadParser::parseList(LoadedList* loaded_list) {
     assert(hasOpenedBrace(this->current_str_list.front()));
 
     QString tag = this->current_str_list.takeFirst();
     tag = removeOpenBrace(tag);
     loaded_list->tag = tag;
 
-    while (!this->in.atEnd() && !this->current_str_list.isEmpty()) {
+    while (!this->in->atEnd() || !this->current_str_list.isEmpty()) {
         if (this->current_str_list.isEmpty()) {
-            QString line = this->in.readLine();
+            QString line = this->in->readLine();
             this->current_str_list = line.split(" ", QString::SkipEmptyParts);            
             this->is_new_line = true;
         }
         while (!this->current_str_list.isEmpty()) {
             LoadedValue value;
-            value.O_NewLine = this->is_new_line;
+            value.options = 0;
+//            value.O_NewLine = this->is_new_line;
+            if (this->is_new_line) {
+                value.options |= value.O_NewLine;
+                this->is_new_line = false;
+            }
             QString front = this->current_str_list.takeFirst();
-            this->is_new_line = false;
 
             /* Collect quoted words into one word */
             if (front.count('"') == 1) { // One quotes
@@ -59,40 +55,46 @@ ReadParser::parseList(LoadedList* loaded_list) {
                 do {
                     phrase.append(front);
                     phrase.append(" ");
-                    assert(this->current_str_list.isEmpty());
+                    assert(!this->current_str_list.isEmpty());
                     front = this->current_str_list.takeFirst();
-                } while (fron.count('"') == 0);
+                } while (front.count('"') == 0);
                 assert(front.count('"') == 1);
-                phrase.remove(phrase.size() - 1, 1); // remove last " "
+                phrase.append(front);
                 front = phrase;
             }
             if (hasOpenedBrace(front)) {
                 value.list = new LoadedList;
-                value.O_IsList = true;
-                list->values.append(value);
+                value.options |= value.O_IsList;
+                loaded_list->values.append(value);
                 this->current_str_list.prepend(front); // push "(tag"
                 parseList(value.list);
             } else if (hasClosedBrace(front)) {
-                value.image = QString(removeEndBrace(front));
-                list->values.append(value);
+                front = removeEndBrace(front);
+                while (!front.isEmpty() && hasClosedBrace(front)) {
+                    front = removeEndBrace(front);
+                    this->current_str_list.prepend(")");
+                }
+                value.image = new QString(front);
+                value.options |= value.O_End;
+                loaded_list->values.append(value);
                 return;
             } else {
-                value.image = QString(front);
-                list->values.append(value);
+                value.image = new QString(front);
+                loaded_list->values.append(value);
             }
         }
     }
     return;
 }
 
-QString ReadParser::removeOpenBrace(const QString &word) {
+QString ReadParser::removeOpenBrace(QString &word) {
     assert(hasOpenedBrace(word));
 
-    QString new_word = word.remove(0);
+    QString new_word = word.remove(0, 1);
     return new_word;
 }
 
-QString ReadParser::removeEndBrace(const QString &word) {
+QString ReadParser::removeEndBrace(QString &word) {
     assert(hasClosedBrace(word));
 
     QString new_word = word.remove(word.size() - 1, 1);
@@ -100,48 +102,49 @@ QString ReadParser::removeEndBrace(const QString &word) {
 }
 
 bool ReadParser::hasOpenedQuotes(const QString &str) {
-    return;
+    return (str[0] == '"');
 }
 
-bool ReadParser::hasClosedQuotes(const QString &str) {
-    return;
-}
+//bool ReadParser::hasClosedQuotes(const QString &str) {
+//    return;
+//}
 
 bool ReadParser::hasOpenedBrace(const QString &str) {
     assert(!str.isEmpty());
-    return (str.data()[0] == "(");
+    return (str[0] == '(');
 }
 
 bool ReadParser::hasClosedBrace(const QString &str) {
     assert(!str.isEmpty());
-    return str.endsWith(")");
+    return str.endsWith(')');
 }
 
-ReadParser::ReadParser() {
-    //TreeDefinition* treeDef = new TreeDefinition;
+//ReadParser::ReadParser() {
+//    //TreeDefinition* treeDef = new TreeDefinition;
 
-    return;
-}
+//    return;
+//}
 
-ReadParser* ReadParser::N(QString tag, std::function<void ()> objConstructor) {
+//ReadParser* ReadParser::N(QString tag, std::function<void ()> objConstructor) {
 //    QStack<QString> tags = this->parse_tag(tag);
 //    while (!tags.isEmpty()) {
 //        this->tree;
 //    }
 
-    return this;
-}
+//    return this;
+//}
 
-ReadParser::A(QString tag, std::function<void ()> objConstructor) {
+//ReadParser::A(QString tag, std::function<void ()> objConstructor) {
 
-}
+//}
 
-NetListReader::NetListReader(const QString& file_path) {
-    this->file_name = file_path;
-}
+//NetListReader::NetListReader() {
+//    this->file_name = file_path;
+//}
 
-void NetListReader::read() {
+void NetListReader::read(QMap<QString, QString> config) {
     ReadParser parser;
+    this->file_name = config["file"];
     parser.read_file(this->file_name, this->source_map);
 
 
@@ -154,3 +157,72 @@ void NetListReader::read() {
 //     .A("      shapeHeight",    &InpPadShape::height );
 //     ReadParser().read_file(this->file_path);
 }
+void NetListReader::destroy() {
+    return;
+}
+
+void NetListReader::update() {
+    QString file_name = this->file_name + "_updated";
+    printToFile(file_name);
+    return;
+}
+
+QVector<GrObject*> NetListReader::get_objects() {
+    return QVector<GrObject*>();
+}
+
+void NetListReader::printToFile(const QString &file_path) const {
+    QFile file(file_path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+    for (QMap<QString, LoadedList*>::const_iterator it = this->source_map.begin();
+         it != this->source_map.end();
+         ++it) {
+        out << it.value()->dump("") << endl
+            << endl;
+    }
+}
+
+QString LoadedValue::dump(QString indent = "") const {
+    QString str;
+    QTextStream out(&str);
+    if (this->options & this->O_NewLine)
+        out << endl << indent;
+    else
+        out << " ";
+
+    if (this->options & this->O_IsList)
+        out << this->list->dump(indent);
+    else
+        out << *this->image;
+
+    if (this->options & this->O_End)
+        out << ")";
+
+//    if (this->options & this->O_EndWithSpace)
+//        out << " )";
+
+//    if (this->options & this->O_EndWithNewLine)
+//        out << endl << indent << ")";
+
+    return *out.string();
+}
+
+QString LoadedList::dump(QString indent = "") const {
+    QString str;
+    QTextStream out(&str);
+    out << "(" << this->tag;
+    for (QVector<LoadedValue>::ConstIterator it = this->values.begin();
+         it != this->values.end();
+         ++it) {
+        out << it->dump(indent + "  ");
+    }
+
+    return *out.string();
+}
+
+GrReaderFabric* GrReaderFabric::root;
+
+DEF_GR(NetListReader); // Fabric registration
