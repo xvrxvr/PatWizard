@@ -52,4 +52,14 @@ protected:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
 };
 
+
+class WizardPointItem : public QGraphicsEllipseItem {
+public:
+    WizardPointItem(qreal x, qreal y, QGraphicsItem * parent = 0) :
+        QGraphicsEllipseItem(x - RADIUS, y - RADIUS, RADIUS, RADIUS, parent) {}
+
+private:
+    const qreal RADIUS;
+};
+
 #endif // WIZARDSCENE_H
