@@ -5,6 +5,7 @@
 
 struct Node{
     geom_index host;
+    uint32_t dindex;
     QVector< geom_index > successors;
     QVector< Constrain > constr;
     enum Options {
@@ -22,6 +23,7 @@ class Graph {
         bool isConnected(Node, Node);//Is there in Node_1 Node_2?
         void addEdge(Node A, Node B, Constrain C);
         void DFS(geom_index , geom_index);
+        void DFN(int root);
 };
 
 

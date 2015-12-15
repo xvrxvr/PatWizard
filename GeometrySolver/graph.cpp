@@ -79,9 +79,40 @@ void Graph::DFS(geom_index x, geom_index required)
             if ( isConnected(nodes[k], nodes[i]) && !visited[i])
             {
                 stack.push(nodes[i]);
-                visited[i] == true;
+                visited[i] = true;
             }
     }
 
     delete [] visited;
+}
+
+void Graph::DFN(int root)
+{
+    geom_index i = 0, curr_num = 0;
+    QStack<Node> stack;
+
+    for ( i = 0 ; i <= n ; ++i )
+    {
+        nodes[i].dindex = 0;
+    }
+
+    stack.push(nodes[root]);
+    nodes[root].dindex = curr_num++;
+
+
+    while ( !stack.isEmpty() ) {
+        geom_index k = stack.pop().host;
+        nodes[k].dindex = curr_num++;
+
+        for( i = 0 ; i < nodes[k].successors.length() ; ++i )
+        {
+            geom_index next = nodes[k].successors.at(i);
+            if(nodes[next].dindex == 0)
+            {
+                stack.push(nodes[next]);
+//                nodes[next].dindex == curr_num++;
+            }
+        }
+    }
+
 }
