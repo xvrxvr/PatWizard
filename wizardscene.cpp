@@ -28,3 +28,6 @@ void WizardArcItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *op
     //if (option->state & QStyle::State_Selected)
     //  qt_graphicsItem_highlightSelected(this, painter, option);
 }
+
+
+const qreal WizardPointItem::RADIUS = 2.0;

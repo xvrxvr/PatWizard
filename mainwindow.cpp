@@ -296,6 +296,8 @@ void MainWindow::drawCircuit() {
         double x, y;
         double ac_x = UNDEF, ac_y = UNDEF;
         double ac_x2 = UNDEF, ac_y2 = UNDEF;
+        GrShape::type prev_type;
+
         foreach (GrShape shape, obj->get_image()) {
             switch (shape.type) {
             
@@ -307,9 +309,7 @@ void MainWindow::drawCircuit() {
             case GrShape::LineTo:
                 if (!shape.options && GrShape::Hidden) {
                     WizardLineItem *item = new WizardLineItem(getSceneX(x),
-                                                              getSceneY(y),
-                                                              getSceneX(shape.x),
-                                                              getSceneY(shape.y));
+                        getSceneY(y), getSceneX(shape.x), getSceneY(shape.y));
                     scene->addItem(item);
                 }
                 x = shape.x;
@@ -354,10 +354,16 @@ void MainWindow::drawCircuit() {
                 }
 
             case GrShape::ClosePath:
+                if (prev_type == GrShape::MoveTo
+                    && !shape.options && GrShape::Hidden)
+                {
+                    WizardPointItem * item = new WizardPointItem(getSceneX(shape.x),
+                                                                 getSceneY(shape.y));
+                    scene->addItem(item);
+                }
                 break;
-            //default:
-                //break;
             }
+            prev_type = shape.type;
         }
     }
 }
