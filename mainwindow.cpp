@@ -347,7 +347,7 @@ void MainWindow::drawCircuit() {
                 break;
             
             case GrShape::LineTo:
-                if (!shape.options && GrShape::Hidden) {
+                if (!(shape.options & GrShape::Hidden)) {
                     WizardLineItem *item = new WizardLineItem(getSceneX(x),
                         getSceneY(y), getSceneX(shape.x), getSceneY(shape.y));
                     scene->addItem(item);
@@ -367,7 +367,7 @@ void MainWindow::drawCircuit() {
                 break;
             
             case GrShape::ArcTo:
-                if (!shape.options && GrShape::Hidden) {
+                if (!(shape.options & GrShape::Hidden)) {
                     double center_x, center_y;
                     double width, height;
                     double angle;
@@ -387,13 +387,13 @@ void MainWindow::drawCircuit() {
 
                     }
 
-                    if ((shape.options && GrShape::FullCircle)
-                        || (shape.options && GrShape::ArcIsEllips)) {
+                    if ((shape.options & GrShape::FullCircle)
+                        || (shape.options & GrShape::ArcIsEllips)) {
                         start_arc = 0.0;
                         end_arc = 360.0;
                     } else {
                         calcArcAngles(center_x, center_y, x, y, shape.x, shape.y,
-                                      start_arc, end_arc, shape.options && GrShape::ArcCW);
+                                      start_arc, end_arc, shape.options & GrShape::ArcCW);
                     }
 
 
@@ -408,7 +408,7 @@ void MainWindow::drawCircuit() {
                 break;
             
             case GrShape::Text:
-                if (!shape.options && GrShape::Hidden) {
+                if (!(shape.options & GrShape::Hidden)) {
                     QGraphicsTextItem * io = new QGraphicsTextItem;
                     io->setPos(getSceneX(shape.x), getSceneY(shape.y));
                     io->setPlainText(shape.text);
@@ -417,7 +417,7 @@ void MainWindow::drawCircuit() {
 
             case GrShape::ClosePath:
                 if (prev_type == GrShape::MoveTo
-                    && !shape.options && GrShape::Hidden)
+                    && !(shape.options & GrShape::Hidden))
                 {
                     WizardPointItem * item = new WizardPointItem(getSceneX(shape.x),
                                                                  getSceneY(shape.y));
@@ -427,5 +427,6 @@ void MainWindow::drawCircuit() {
             }
             prev_type = shape.type;
         }
+
     }
 }
