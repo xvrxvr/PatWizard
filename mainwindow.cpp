@@ -10,6 +10,7 @@
 #include <QGroupBox>
 #include <QDoubleValidator>
 #include <QDoubleSpinBox>
+#include <QtCore/qmath.h>
 // proj.specific headers
 #include "wizardscene.h"
 #include "gr_object.h"
@@ -251,6 +252,41 @@ bool sleepy() {
 }
 
 
+void calcArcAngles(double center_x, double center_y,
+                   double x1, double y1,
+                   double x2, double y2,
+                   double& start_angle, double& end_angle,
+                   bool cw)
+{
+    auto getVectMul = [center_x, center_y](double x1, double y1, double x2, double y2) {
+        return (x1 - center_x) * (y2 - center_y) - (x2 - center_x) * (y1 - center_y);
+    };
+    auto getVectLength = [center_x, center_y](double x, double y) {
+        return qSqrt(qPow(x - center_x, 2) + qPow(y - center_y, 2));
+    };
+    auto calcAngle = [center_x, center_y, getVectMul, getVectLength](double x, double y) {
+        double vect_mul = getVectMul(center_x + 1, center_y, x, y);
+        double angle = qAsin(vect_mul / getVectLength(x, y));
+        if (vect_mul < 0) {
+            angle = 360.0 - angle;
+        } else if (vect_mul == 0 && x < center_x) {
+            angle = 180.0;
+        }
+        return angle;
+    };
+
+    double vect_mul = getVectMul(x1, y1, x2, y2);
+
+    start_angle = calcAngle(x1, y1);
+    end_angle = calcAngle(x2, y2);
+
+    if (vect_mul > 0 && cw) {
+        qSwap(start_angle, end_angle);
+    } else if (vect_mul == 0) {
+
+    }
+}
+
 void MainWindow::drawCircuit() {
     const double SHIFT = 100;
     double min_x, min_y, max_x, max_y;
@@ -277,6 +313,10 @@ void MainWindow::drawCircuit() {
 
     auto getSceneX = [min_x, SHIFT](double x){ return x - min_x + SHIFT; };
     auto getSceneY = [max_y, SHIFT](double y){ return qAbs(y - max_y) + SHIFT; };
+    auto getDistance = [](double x, double y, double x2, double y2) {
+        return qSqrt(qPow(x - x2, 2) + qPow(y - y2, 2));
+    };
+
     foreach (GrObject* obj, objects) {
         double x, y;
         double ac_x = UNDEF, ac_y = UNDEF;
@@ -314,10 +354,32 @@ void MainWindow::drawCircuit() {
             case GrShape::ArcTo:
                 if (!shape.options && GrShape::Hidden) {
                     double center_x, center_y;
+                    double width, height;
+                    double angle;
+                    double start_arc, end_arc;
                     bool is_circle = ac_x2 == UNDEF;
+
                     center_x = is_circle ? ac_x : ac_x + (ac_x2 - ac_x) / 2;
                     center_y = is_circle ? ac_y : ac_y + (ac_y2 - ac_y) / 2;
 
+                    if (is_circle) {
+                        height = width = getDistance(x, y, center_x, center_y);
+                        angle = 0.0;
+                    } else {
+                        width = getDistance(x, y, center_x, center_y)
+                                + getDistance(shape.x, shape.y, center_x, center_y);
+                        width /= 2;
+
+                    }
+
+                    if ((shape.options && GrShape::FullCircle)
+                        || (shape.options && GrShape::ArcIsEllips)) {
+                        start_arc = 0.0;
+                        end_arc = 360.0;
+                    } else {
+                        calcArcAngles(center_x, center_y, x, y, shape.x, shape.y,
+                                      start_arc, end_arc, shape.options && GrShape::ArcCW);
+                    }
 
 
                     WizardArcItem* item = new WizardArcItem(x, y, x, x);
