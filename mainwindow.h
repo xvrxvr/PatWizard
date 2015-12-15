@@ -1,19 +1,27 @@
-#ifndef MAINWINDOW_H
+    #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFutureWatcher>
+#include "gr_object.h"
 
+//Forward decl.
 class WizardScene;
 class GrReaderFabric;
 class GrReader;
 class QToolButton;
 class QButtonGroup;
+class GemetrySolver;
+class GrObject;
 
 QT_BEGIN_NAMESPACE
 class QAction;
 class QGraphicsView;
 class QComboBox;
 class QToolBox;
+class QLineEdit;
+class QDoubleSpinBox;
+class QGroupBox;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -22,14 +30,16 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    enum Mode { usual=0, addConstrain=1};
+    enum Mode { usualMode=0, addConstrainMode=1};
 
 private slots:
     void openFile();
     void about();
     void sceneScaleChanged(const QString &scale);
-    void addConstrModeApply(bool);
+    void applyAddConstrMode(bool);
     void calculateConstrains();
+    void calcFinished();
+    void addConstrain();
 
 private:
     //should be used in constructor for building menu entries callbacks.
@@ -37,6 +47,10 @@ private:
     void createMenus();
     void createToolBar();
     void createToolBox();
+    void drawCircuit();
+    QGroupBox* makeConstrainGroupBox();
+
+    Mode userMode;
 
     WizardScene *scene;
     QGraphicsView *view;
@@ -46,15 +60,25 @@ private:
     QStatusBar *status;
     QToolBar *pointerToolbar;
     QComboBox *sceneScaleCombo;
+
     QToolBox *toolBox;
+    QComboBox *constrainTypeCombo;
+    QDoubleSpinBox *constrParam1SBox;
+    QDoubleSpinBox *constrParam2SBox;
 
     QAction *openFileAction;
     QAction *aboutAction;
     QAction *toolbarAddConstrAction;
     QAction *toolbarCalcConstrAction;
+    QAction *tboxAddConstrainAction;
 
     QToolButton *addConstrButton;
     QToolButton *calcConstrainsButton;
+    bool calcPending;
+    //GemetrySolver* solver;
+    QVector<GrObject*> objects;
+    QFutureWatcher<bool> calculationWatcher;
+    QMap<QString, Constrain::TypeC> comboToCTypeMap;
 
 /*
     QVector<GrObject*> objects;
@@ -66,5 +90,8 @@ private:
 */
 
 };
+
+// added for emulating async function call.
+bool sleepy();
 
 #endif // MAINWINDOW_H

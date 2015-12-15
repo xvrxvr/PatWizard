@@ -1,15 +1,27 @@
 #include "mainwindow.h"
 
+//QT standard library
 #include <QtWidgets>
 #include <QToolButton>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
+#include <QMessageBox>
+#include <QThread>
+#include <QGroupBox>
+#include <QDoubleValidator>
+#include <QDoubleSpinBox>
+// proj.specific headers
 #include "wizardscene.h"
 #include "gr_object.h"
+//#include "GeometrySolver/gemetrysolver.h"
 
 MainWindow::MainWindow() {
     createActions();
     createToolBar();
     createMenus();
     createToolBox();
+
+    userMode = usualMode;
 
     scene = new WizardScene(fileMenu, this);
     scene->setSceneRect(QRectF(0, 0, 500, 500));
@@ -27,7 +39,23 @@ MainWindow::MainWindow() {
     setWindowTitle(tr("PatWizard"));
     setUnifiedTitleAndToolBarOnMac(true);
 
+    calcPending = false;
     status = statusBar();
+    // Init gemetrySolver. Uncomment once it's implemented.
+    //solver = new GemetrySolver();
+    // TODO: add hardcode init of objects.
+
+    // very wise code.
+    comboToCTypeMap.insert("PointCoord", Constrain::PointCoord);
+    comboToCTypeMap.insert("PointToPoint", Constrain::PointToPoint);
+    comboToCTypeMap.insert("LineToPoint", Constrain::LineToPoint);
+    comboToCTypeMap.insert("ArcToPoint", Constrain::ArcToPoint);
+    comboToCTypeMap.insert("LineToLine", Constrain::LineToLine);
+    comboToCTypeMap.insert("LineAngle", Constrain::LineAngle);
+    comboToCTypeMap.insert("ArcToArc", Constrain::ArcToArc);
+    comboToCTypeMap.insert("ArcAngle", Constrain::ArcAngle);
+    comboToCTypeMap.insert("ArcSweep", Constrain::ArcSweep);
+    comboToCTypeMap.insert("ArcRadius", Constrain::ArcRadius);
 }
 
 
@@ -46,14 +74,19 @@ void MainWindow::createActions() {
     toolbarAddConstrAction = new QAction(this);
     toolbarAddConstrAction->setShortcut(tr("Ctrl+A"));
     toolbarAddConstrAction->setCheckable(true);
-    toolbarAddConstrAction->setIconText(tr("Hi"));
-    connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(addConstrModeApply(bool)));
+    toolbarAddConstrAction->setIconText(tr("AddConstrMode"));
+    connect(toolbarAddConstrAction, SIGNAL(triggered(bool)), this, SLOT(applyAddConstrMode(bool)));
 
     // add action for calcConstrains ToolButton/
     toolbarCalcConstrAction = new QAction(this);
     toolbarCalcConstrAction->setShortcut(tr("Ctrl+C"));
     toolbarCalcConstrAction->setIconText(tr("Calc"));
     connect(toolbarCalcConstrAction, SIGNAL(triggered()), this, SLOT(calculateConstrains()));
+
+    // add action for toolbox button "Add Constrain"
+    tboxAddConstrainAction = new QAction(this);
+    tboxAddConstrainAction->setIconText(tr("Add Constrain"));
+    connect(tboxAddConstrainAction, SIGNAL(triggered()), this, SLOT(addConstrain()));
 }
 
 
@@ -89,27 +122,65 @@ void MainWindow::createMenus() {
 }
 
 
-
 void MainWindow::createToolBox() {
     QGridLayout *layout = new QGridLayout;
+
+    QGroupBox* gbox = makeConstrainGroupBox();
+    layout->addWidget(gbox, 0, 0);
+
     QToolButton *button = new QToolButton;
-    button->setDefaultAction(toolbarAddConstrAction);
+    button->setDefaultAction(tboxAddConstrainAction);
     layout->addWidget(button);
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(layout);
-    qDebug() << "Oo";
+
     toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(200);
-    toolBox->addItem(itemWidget, tr("What?"));
+    toolBox->addItem(itemWidget, tr("Constrain Addition"));
 }
 
+
+QGroupBox* MainWindow::makeConstrainGroupBox() {
+    QGroupBox* box = new QGroupBox(tr("Constrain parameters"));
+    QLabel* typeLabel = new QLabel(tr("Constrain type"));
+
+    constrainTypeCombo = new QComboBox;
+    QStringList types;
+    //types << tr("one") << tr("two") << tr("three");  // <-- only for PoC. After testing replace it with right types!
+    types << tr("PointCoord") << tr("PointToPoint") << tr("LineToPoint") <<
+             tr("ArcToPoint") << tr("LineToPoint") << tr("ArcToPoint") << tr("LineToLine") <<
+             tr("LineAngle") << tr("ArcToArc") << tr("ArcAngle") << tr("ArcSweep") << tr("ArcRadius");
+    constrainTypeCombo->addItems(types);
+
+    QDoubleValidator *valid = new QDoubleValidator(0.0, qInf(), 2, this);
+    valid->setNotation(QDoubleValidator::StandardNotation);
+
+    QLabel *val1Label = new QLabel(tr("Value1"));
+    constrParam1SBox = new QDoubleSpinBox;
+
+    QLabel *val2Label = new QLabel(tr("Value2"));
+    constrParam2SBox = new QDoubleSpinBox;
+
+    QGridLayout *localLayout = new QGridLayout;
+    localLayout->addWidget(typeLabel, 0, 0);
+    localLayout->addWidget(constrainTypeCombo, 0, 1);
+    localLayout->addWidget(val1Label, 1, 0);
+    localLayout->addWidget(constrParam1SBox, 1, 1);
+    localLayout->addWidget(val2Label, 2, 0);
+    localLayout->addWidget(constrParam2SBox, 2, 1);
+
+    box->setLayout(localLayout);
+    return box;
+}
+
+/********************
+ * SLOTS impl. section
+ *******************/
 
 void MainWindow::openFile() {
     QString fileName =
             QFileDialog::getOpenFileName(this, tr("Open PCB File"), ".", tr("PCB files(*.pcb)"));
-    //fabric = new GrRdrFabricImp<GR>(filename);
-    //reader = fabric->create();
 }
 
 
@@ -128,11 +199,171 @@ void MainWindow::sceneScaleChanged(const QString &scale) {
     view->scale(newScale, newScale);
 }
 
-void MainWindow::addConstrModeApply(bool checked) {
-    qDebug() << "hi" << checked;
+void MainWindow::applyAddConstrMode(bool checked) {
+    qDebug() << "applyAddConstrMode::" << checked;
+    if (checked) {
+        userMode = addConstrainMode;
+    } else {
+        userMode = usualMode;
+    }
+    //drawCircuit(); // <-- here? really?
 }
 
 void MainWindow::calculateConstrains()
 {
     qDebug() << "calculateConstrains()";
+    if (calcPending) {
+        qDebug() << "calculation is already pending!";
+        QMessageBox msgBox;
+        msgBox.setText("Calculation is already pending!");
+        msgBox.exec();
+        return;
+    }
+    //commented due to incomplete implementation of GemetrySolver.
+    //uncomment once it's implemented and tested.
+    //QFuture<bool> future = QConcurrent::run(solver->RunSolver, objects);
+    //QObject::connect(calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
+    //watcher.setFuture(future);
+    calcPending = true;
+    QFuture<bool> future = QtConcurrent::run(sleepy);
+    connect(&calculationWatcher, SIGNAL(finished()), this, SLOT(calcFinished()));
+    calculationWatcher.setFuture(future);
+}
+
+void MainWindow::calcFinished() {
+    qDebug() << "calc finished";
+    bool result = calculationWatcher.future().result();
+    qDebug() << "result is " << result;
+}
+
+void MainWindow::addConstrain() {
+    qDebug() << "addConstrain()";
+    // err detection
+    if (userMode != addConstrainMode) {
+        qDebug() << "[diag] addConstrain:: userMode is invalid, no addition should be done";
+        QMessageBox errBox;
+        errBox.setText("Cannot add constrain with inactive AddConstrainMode");
+        errBox.exec();
+        return;
+    }
+
+    QString type = constrainTypeCombo->currentText();
+    qDebug() << "addConstrain::" << type;
+    double val1 = constrParam1SBox->value();
+    double val2 = constrParam2SBox->value();
+
+    qDebug() << "val1: " << val1 << "; val2 = " << val2 << ";";
+
+    status->showMessage("add Constrain isn't complete!", 5000);
+}
+/*
+ * SLOTS impl. END
+ */
+
+bool sleepy() {
+    QThread::sleep(5); // sleep for 5 seconds;
+    return false;
+}
+
+
+void MainWindow::drawCircuit() {
+    const double SHIFT = 100;
+    double min_x, min_y, max_x, max_y;
+
+    if (objects.length() == 0)
+        return;
+
+    min_x = max_x = objects[0]->get_image()[0].x;
+    min_y = max_y = objects[0]->get_image()[0].y;
+
+    const double UNDEF = min_x - SHIFT - 10;
+
+    foreach (GrObject* obj, objects) {
+        foreach (GrShape shape, obj->get_image()) {
+            min_x = qMin(min_x, shape.x);
+            min_y = qMin(min_y, shape.y);
+            max_x = qMax(max_x, shape.x);
+            max_y = qMax(max_y, shape.y);
+        }
+    }
+
+    scene->clear();
+    scene->setSceneRect(QRectF(0, 0, max_x - min_x + 2 * SHIFT, max_y - min_y + 2 * SHIFT));
+
+    auto getSceneX = [min_x, SHIFT](double x){ return x - min_x + SHIFT; };
+    auto getSceneY = [max_y, SHIFT](double y){ return qAbs(y - max_y) + SHIFT; };
+    foreach (GrObject* obj, objects) {
+        double x, y;
+        double ac_x = UNDEF, ac_y = UNDEF;
+        double ac_x2 = UNDEF, ac_y2 = UNDEF;
+        GrShape::Type prev_type;
+
+        foreach (GrShape shape, obj->get_image()) {
+            switch (shape.type) {
+            
+            case GrShape::MoveTo:
+                x = shape.x;
+                y = shape.y;
+                break;
+            
+            case GrShape::LineTo:
+                if (!shape.options && GrShape::Hidden) {
+                    WizardLineItem *item = new WizardLineItem(getSceneX(x),
+                        getSceneY(y), getSceneX(shape.x), getSceneY(shape.y));
+                    scene->addItem(item);
+                }
+                x = shape.x;
+                y = shape.y;
+                break;
+
+            case GrShape::ArcCenter:
+                ac_x = shape.x;
+                ac_y = shape.y;
+                break;
+
+            case GrShape::ArcCenter2:
+                ac_x2 = shape.x;
+                ac_y2 = shape.y;
+                break;
+            
+            case GrShape::ArcTo:
+                if (!shape.options && GrShape::Hidden) {
+                    double center_x, center_y;
+                    bool is_circle = ac_x2 == UNDEF;
+                    center_x = is_circle ? ac_x : ac_x + (ac_x2 - ac_x) / 2;
+                    center_y = is_circle ? ac_y : ac_y + (ac_y2 - ac_y) / 2;
+
+
+
+                    WizardArcItem* item = new WizardArcItem(x, y, x, x);
+                    item->setStartAngle(x);
+                    item->setSpanAngle(x);
+                    scene->addItem(item);
+                }
+                x = shape.x;
+                y = shape.y;
+                ac_x = ac_x2 = ac_y = ac_y2 = UNDEF;
+                break;
+            
+            case GrShape::Text:
+                if (!shape.options && GrShape::Hidden) {
+                    QGraphicsTextItem * io = new QGraphicsTextItem;
+                    io->setPos(getSceneX(shape.x), getSceneY(shape.y));
+                    io->setPlainText(shape.text);
+                    scene->addItem(io);
+                }
+
+            case GrShape::ClosePath:
+                if (prev_type == GrShape::MoveTo
+                    && !shape.options && GrShape::Hidden)
+                {
+                    WizardPointItem * item = new WizardPointItem(getSceneX(shape.x),
+                                                                 getSceneY(shape.y));
+                    scene->addItem(item);
+                }
+                break;
+            }
+            prev_type = shape.type;
+        }
+    }
 }

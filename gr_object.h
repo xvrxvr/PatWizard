@@ -22,8 +22,6 @@ struct GrShape {
     const char* text;
     uint8_t color;
     uint8_t shape;
-    //TODO: удалить поле
-    bool fix;//can we shift this object or not
 
     enum Options {
         FixedPoint     = 0x00000001,
