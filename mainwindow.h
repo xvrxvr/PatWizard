@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFutureWatcher>
+#include "gr_object.h"
 
 //Forward decl.
 class WizardScene;
@@ -77,6 +78,7 @@ private:
     //GemetrySolver* solver;
     QVector<GrObject*> objects;
     QFutureWatcher<bool> calculationWatcher;
+    QMap<QString, Constrain::TypeC> comboToCTypeMap;
 
 /*
     QVector<GrObject*> objects;
