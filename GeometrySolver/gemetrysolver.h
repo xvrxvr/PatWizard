@@ -1,6 +1,7 @@
 #ifndef GEMETRYSOLVER_H
 #define GEMETRYSOLVER_H
 #include "gr_object.h"
+#include "graph.h"
 #include <cmath>
 #include <QStack>
 #include <QStack>
