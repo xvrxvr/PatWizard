@@ -50,8 +50,6 @@ void ReadParser::parseList(LoadedList* loaded_list) {
             if (front.count('"') == 1) { // One quotes
                 assert(hasOpenedQuotes(front));
                 QString phrase;
-                // does not work with " something". quotes is a alone word
-                // --/-- "something")
                 do {
                     phrase.append(front);
                     phrase.append(" ");
@@ -105,10 +103,6 @@ bool ReadParser::hasOpenedQuotes(const QString &str) {
     return (str[0] == '"');
 }
 
-//bool ReadParser::hasClosedQuotes(const QString &str) {
-//    return;
-//}
-
 bool ReadParser::hasOpenedBrace(const QString &str) {
     assert(!str.isEmpty());
     return (str[0] == '(');
@@ -118,12 +112,6 @@ bool ReadParser::hasClosedBrace(const QString &str) {
     assert(!str.isEmpty());
     return str.endsWith(')');
 }
-
-//ReadParser::ReadParser() {
-//    //TreeDefinition* treeDef = new TreeDefinition;
-
-//    return;
-//}
 
 //ReadParser* ReadParser::N(QString tag, std::function<void ()> objConstructor) {
 //    QStack<QString> tags = this->parse_tag(tag);
@@ -147,7 +135,6 @@ void NetListReader::read(QMap<QString, QString> config) {
     this->file_name = config["file"];
     parser.read_file(this->file_name, this->source_map);
 
-
     // it is anonymous object
 //    ReadParser()
 //     .N("library/padStyleDef",  []() {new InpPadStyle})
@@ -155,7 +142,7 @@ void NetListReader::read(QMap<QString, QString> config) {
 //     .A("      padShapeType",   &InpPasShape::shape )
 //     .A("      shapeWidth",     &InpPadShape::width )
 //     .A("      shapeHeight",    &InpPadShape::height );
-//     ReadParser().read_file(this->file_path);
+
 }
 void NetListReader::destroy() {
     return;

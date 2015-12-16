@@ -49,10 +49,6 @@ struct LoadedList {
 
 class ReadParser {
 public:
-/* it was for previous implementation used "<<"
-    ReadParser(const char* xpath, ReadEventHandler*);
-    ReadParser& operator << (const ReadParser&);
-*/
     void read_file(const QString& file_path, QMap<QString,LoadedList*>& source_map);
 //    ReadParser* N(QString tag, std::function<void()> objConstructor);
 //    ReadParser* A(QString tag, std::function<void()> objConstructor);
@@ -73,24 +69,11 @@ private:
     bool hasClosedBrace(const QString& str);
     bool hasOpenedQuotes(const QString& str);
     bool hasClosedQuotes(const QString& str);
-//    QStack parse_tag(QString tag);
 //    unsigned current_level;
 //    TreeDefinition* tree;
 };
 
-/*
-// previous implementation
-
-  ReadParser("library/padStyleDef",new PadStyleHandler)
-   << ReadParser("holeDiam", new GetHoleDiament)
-   <<
-    (ReadParser("padShape", new GetPadShape)
-      << ReadParser("padShapeType", new GetPadShapeType)
-      << ReadParser("shapeWidth", new GetShapeWidth)
-      << ReadParser("shapeHeight", new GetShapeHeight)
-    )
-   << ReadParser("viaStyleDef", new ViaStyleHandler)
-
+   /*
    class InpPadShape : public ParserHandle {
    public:
         virtual void start();
@@ -108,7 +91,6 @@ public:
     virtual QVector<GrObject*> get_objects();
     virtual void update();
 
-    //NetListReader();
 private:
     QString file_name;
     QMap<QString, LoadedList*> source_map;
