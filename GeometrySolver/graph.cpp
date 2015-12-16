@@ -186,16 +186,16 @@ void Tree::BuildTreeCycle(list<list <geom_index> > allCycles){
     allCycles.sort(compare);
     list<Tree*> tree_elem;
     list<Tree*>::iterator itr = tree_elem.begin();
-    list<list<geom_index> >::iterator itr_cyc = allCycles.begin();
+    list<list<geom_index> >::iterator itr_cyc = allCycles.end();
     tree_elem.push_back(this);
     for(int i = 0; i < allCycles.size(); i++)
     {
+        advance(itr,1);
         for(int j = tree_elem.size() - 1 ; j >= 0; j++)
         {
-            advance(itr,j);
-            advance(itr_cyc,j);
-            //if(itr->IsContain(*itr_cyc))
-            //    itr->AddVertex(*itr_cyc);
+            advance(itr_cyc,-1);
+            if((*itr)->IsContain(*itr_cyc))
+                (*itr)->AddVertex(*itr_cyc);
         }
 
     }
@@ -211,14 +211,16 @@ void Tree::AddVertex(list<geom_index> temp){
 
 bool Tree::IsContain(list<geom_index> temp){
     int res = 0;
+    list<geom_index>::iterator iter_cycle = cycle.begin();
+    list<geom_index>::iterator iter_temp = temp.begin();
     if(cycle.size() >= temp.size())
         return false;
-    for(int i = 0; i < cycle.size(); i++)
+    for(int i = 0; i < cycle.size(); advance(iter_cycle,1), i++)
     {
-        for(int j; j < temp.size() - 1; j++)
+        for(int j; j < temp.size() - 1; advance(iter_temp,1), j++)
         {
-            //if (cycle[i] == temp[j])
-            //    res += 1;
+            if (*iter_cycle == *iter_temp)
+                res += 1;
         }
 
     }
@@ -234,6 +236,21 @@ Tree::Tree(list<geom_index> top_cycle) {
 }
 
 Tree::~Tree() {
-//    for (int i = 0; i < n; ++i)
-//    delete [] nodes[i];
+    for (int i = 0; i < sons.length(); ++i)
+    {
+        sons.at(i)->~Tree();
+        delete sons.at(i);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+

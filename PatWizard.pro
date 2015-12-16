@@ -16,6 +16,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         wizardscene.cpp \
         GeometrySolver/gemetrysolver.cpp \
+    GeometrySolver/graph.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -23,6 +24,7 @@ HEADERS  += mainwindow.h \
     NetListReader/inp_def.h \
     wizardscene.h \
     GeometrySolver/gemetrysolver.h \
+    GeometrySolver/graph.h
 
 
 FORMS    += mainwindow.ui
